@@ -1,6 +1,10 @@
 <?php
 
 return [
+
+    // Project Call Type
+    'lab_budget' => 'Demander le budget des laboratoires porteurs ?',
+
     // Project Call
     'project_call_type'      => 'Type d\'Appel',
     'year'                   => 'Année',

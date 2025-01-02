@@ -93,6 +93,10 @@ return [
         'devalidated' => 'Dévalidée',
     ],
 
+    'project_call_type' => [
+        'lab_budget_help' => 'Si activé, les candidats devront saisir les budgets des laboratoires porteurs de la candidature (montant total, dépenses RH, dépenses de fonctionnement et dépenses d\'investissement.',
+    ],
+
     'application' => [
         'offers'                       => 'Experts (:count)',
         'evaluations'                  => 'Évaluations (:count)',
