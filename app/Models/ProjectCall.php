@@ -163,7 +163,7 @@ class ProjectCall extends Model implements HasMedia, WithCreator
     public function status(): Attribute
     {
         return Attribute::make(
-            get: fn () => match (true) {
+            get: fn() => match (true) {
                 ($this->application_start_date > now()) => ProjectCallStatus::PLANNED,
                 ($this->application_end_date > now())   => ProjectCallStatus::APPLICATION,
                 ($this->evaluation_start_date > now())  => ProjectCallStatus::WAITING_FOR_EVALUATION,
@@ -197,7 +197,11 @@ class ProjectCall extends Model implements HasMedia, WithCreator
      */
     public function getApplication(): ?Application
     {
-        return $this->applications->first();
+        $model = $this->applications->first();
+        if ($model) {
+            $model->refresh();
+        }
+        return $model;
     }
 
     public function canApply(): bool

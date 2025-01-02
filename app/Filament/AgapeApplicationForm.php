@@ -147,6 +147,7 @@ class AgapeApplicationForm
                     ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
                     ->addActionLabel(__('pages.apply.add_carrier'))
                     ->deletable()
+                    ->itemLabel(fn(array $state): ?string => $state['last_name'] . ' ' . $state['first_name'] ?? null)
                     ->schema([
                         Forms\Components\Hidden::make('id'),
                         Forms\Components\TextInput::make('last_name')
@@ -356,7 +357,8 @@ class AgapeApplicationForm
                         'default' => 1,
                         'sm'      => 1,
                         'lg'      => 2,
-                    ]);
+                    ])
+                    ->helperText(__('attributes.summary_help'));
             case 'summary.en':
                 return AgapeForm::richTextEditor('summary.en')
                     ->required()
@@ -364,7 +366,8 @@ class AgapeApplicationForm
                         'default' => 1,
                         'sm'      => 1,
                         'lg'      => 2,
-                    ]);
+                    ])
+                    ->helperText(__('attributes.summary_help'));
             case 'studyFields':
                 return $this->projectCall->extra_attributes->number_of_study_fields > 0
                     ? Forms\Components\Select::make('studyFields')

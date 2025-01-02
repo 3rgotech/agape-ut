@@ -2,6 +2,8 @@
 
 namespace App\Rulesets;
 
+use App\Enums\JobTitle;
+use App\Enums\OrganizationType;
 use App\Models\ProjectCall;
 use App\Settings\GeneralSettings;
 use Illuminate\Support\Carbon;
@@ -17,30 +19,28 @@ class Application
         $maxNumberOfStudyFields = $projectCall->extra_attributes->get("number_of_study_fields", null);
         $maxNumberOfDocuments = $projectCall->extra_attributes->get("number_of_documents", null);
         $rules = [
-            'title'                                    => 'required|string|max:255',
-            'acronym'                                  => 'required|string|max:255',
-            'carrier.first_name'                       => 'required|string|max:255',
-            'carrier.last_name'                        => 'required|string|max:255',
-            'carrier.email'                            => 'required|string|max:255|email',
-            'carrier.phone'                            => 'required|string|max:255',
-            'carrier.status'                           => 'required|string|max:255',
-            'applicationLaboratories'                  => ['required', 'array', 'min:1', filled($maxNumberOfLaboratories) ? 'max:' . $maxNumberOfLaboratories : null],
-            // 'laboratories.*.laboratory.id'             => 'required|exists:laboratories,id',
-            // 'laboratories.*.laboratory.name'           => 'required|max:255',
-            // 'laboratories.*.laboratory.unit_code'      => 'required|max:255',
-            // 'laboratories.*.laboratory.director_email' => 'required|max:255|email',
-            // 'laboratories.*.laboratory.regency'        => 'required|max:255',
-            // 'laboratories.*.contact_name'              => 'required|max:255',
-            'studyFields'                             => ['required', 'array', 'min:1', filled($maxNumberOfStudyFields) ? 'max:' . $maxNumberOfStudyFields : null],
-            // 'study_fields.*.id'                        => 'required|exists:study_fields,id',
-            'summary.fr'                               => 'required',
-            'summary.en'                               => 'required',
-            'keywords'                                 => array_filter(['required', 'array', 'min:1', filled($maxNumberOfKeywords) ? 'max:' . $maxNumberOfKeywords : null]),
-            'keywords.*'                               => 'max:100',
-            'short_description'                        => 'required',
-            'amount_requested'                         => 'required|numeric|min:0',
-            'other_fundings'                           => 'required|numeric|min:0',
-            'applicationForm'                          => ($generalSettings->enableApplicationForm && $projectCall->hasMedia('applicationForm'))
+            'title'                              => 'required|string|max:255',
+            'acronym'                            => 'required|string|max:255',
+            'studyFields'                        => ['required', 'array', 'min:1', filled($maxNumberOfStudyFields) ? 'max:' . $maxNumberOfStudyFields : null],
+            'summary.fr'                         => 'required',
+            'summary.en'                         => 'required',
+            'keywords'                           => array_filter(['required', 'array', 'min:1', filled($maxNumberOfKeywords) ? 'max:' . $maxNumberOfKeywords : null]),
+            'keywords.*'                         => 'max:100',
+            'short_description'                  => 'required',
+            'carriers'                           => 'required|array|min:1',
+            'carriers.*.first_name'              => 'required|string|max:255',
+            'carriers.*.last_name'               => 'required|string|max:255',
+            'carriers.*.email'                   => 'required|string|max:255|email',
+            'carriers.*.phone'                   => 'required|string|max:255',
+            'carriers.*.laboratory_id'           => 'nullable|required_without:carriers.*.organization|exists:laboratories,id',
+            'carriers.*.job_title'               => ['nullable', 'required_with:carriers.*.laboratory_id', Rule::enum(JobTitle::class)],
+            'carriers.*.job_title_other'         => 'nullable|required_if:carriers.*.job_title,other|string|max:255',
+            'carriers.*.organization'            => 'nullable|required_without:carriers.*.laboratory_id|string|max:255',
+            'carriers.*.organization_type'       => ['nullable', 'required_with:carriers.*.organization', Rule::enum(OrganizationType::class)],
+            'carriers.*.organization_type_other' => 'nullable|required_if:carriers.*.organization_type,other|string|max:255',
+            'amount_requested'                   => 'required|numeric|min:0',
+            'other_fundings'                     => 'required|numeric|min:0',
+            'applicationForm'                    => ($generalSettings->enableApplicationForm && $projectCall->hasMedia('applicationForm'))
                 ? 'required|array|min:1'
                 : 'prohibited',
             'financialForm'                            => ($generalSettings->enableFinancialForm && $projectCall->hasMedia('financialForm'))
@@ -119,9 +119,12 @@ class Application
     public static function messages(ProjectCall $projectCall): array
     {
         $messages = [
-            'applicationLaboratories.required' => __('validation.custom.laboratories.min'),
-            'applicationLaboratories.min'      => __('validation.custom.laboratories.min'),
-            'applicationLaboratories.max'      => __('validation.custom.laboratories.max'),
+            'carriers.*.laboratory_id.required_without'      => __('validation.custom.carrier.laboratory_required'),
+            'carriers.*.job_title.required_with'             => __('validation.custom.carrier.job_title_required'),
+            'carriers.*.job_title_other.required_if'         => __('validation.custom.carrier.job_title_other_required'),
+            'carriers.*.organization.required_without'       => __('validation.custom.carrier.organization_required'),
+            'carriers.*.organization_type.required_with'     => __('validation.custom.carrier.organization_type_required'),
+            'carriers.*.organization_type_other.required_if' => __('validation.custom.carrier.organization_type_other_required'),
         ];
         // Add messages for dynamic attributes
         $dynamicAttributes = $projectCall->projectCallType->dynamic_attributes;

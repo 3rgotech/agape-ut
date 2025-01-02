@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
@@ -165,32 +166,36 @@ class Apply extends Page implements HasForms
         }
 
         $this->application->projectCall()->associate($this->projectCall);
-        $this->application->fill($formData);
+        $this->application->fill(Arr::except($formData, ['carriers']));
         $this->application->extra_attributes = AgapeApplicationForm::getExtraAttributes($this->projectCall, $this->form);
 
         $this->application->save();
 
-        $this->application->laboratories()->sync(
-            collect($formData['applicationLaboratories'] ?? [])
-                ->values()
-                ->filter(fn($lab) => filled($lab['laboratory_id']))
-                ->mapWithKeys(fn($lab, $i) => [intval($lab['laboratory_id']) => [
-                    'contact_name' => $lab['contact_name'],
-                    'order' => $i + 1
-                ]])->all()
-        );
+        // $this->application->laboratories()->sync(
+        //     collect($formData['applicationLaboratories'] ?? [])
+        //         ->values()
+        //         ->filter(fn($lab) => filled($lab['laboratory_id']))
+        //         ->mapWithKeys(fn($lab, $i) => [intval($lab['laboratory_id']) => [
+        //             'contact_name' => $lab['contact_name'],
+        //             'order' => $i + 1
+        //         ]])->all()
+        // );
 
         // Save carriers
-        $existingCarriers = collect($this->application->carriers()->pluck('id'));
+        $obsoleteCarriers = collect($this->application->carriers()->pluck('id'));
         foreach ($formData['carriers'] as $carrier) {
             if (filled($carrier['id'])) {
-                $existingCarriers->reject(fn($id) => $id === intval($carrier['id']));
-                $this->application->carriers()->updateOrCreate(['id' => intval($carrier['id'])], $carrier);
+                dump('updating carrier ' . $carrier['id']);
+                $obsoleteCarriers = $obsoleteCarriers->reject(fn($id) => $id === intval($carrier['id']));
+                $this->application->carriers()->where('id', intval($carrier['id']))->update(
+                    Arr::only($carrier, ['first_name', 'last_name', 'email', 'phone', 'main_carrier', 'laboratory_id', 'job_title', 'job_title_other', 'organization', 'organization_type', 'organization_type_other'])
+                );
             } else {
+                dump('creating carrier');
                 $this->application->carriers()->create($carrier);
             }
         }
-        $this->application->carriers()->whereIn('id', $existingCarriers)->delete();
+        $this->application->carriers()->whereIn('id', $obsoleteCarriers)->delete();
 
         $this->application->studyFields()->sync(array_map("intval", $formData["studyFields"]));
 
@@ -242,6 +247,9 @@ class Apply extends Page implements HasForms
             ApplicationRuleset::attributes($this->projectCall),
         );
         if ($validator->fails()) {
+            if (App::isLocal()) {
+                dump($validator->errors()->messages());
+            }
             $errors = collect($validator->errors()->messages())
                 ->mapWithKeys(fn($messages, $key) => ['data.' . $key => $messages])->all();
             $this->dispatch('close-modal', id: "{$this->getId()}-form-component-action");

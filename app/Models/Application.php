@@ -141,13 +141,6 @@ class Application extends Model implements HasMedia, WithSubmission
         'applicant_id'           => 'integer',
     ];
 
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ['studyFields', 'laboratories'];
-
     public $translatable = ['summary'];
 
 
