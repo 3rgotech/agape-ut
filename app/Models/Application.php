@@ -189,14 +189,9 @@ class Application extends Model implements HasMedia, WithSubmission
         return $this->belongsToMany(StudyField::class);
     }
 
-    public function applicationLaboratories(): HasMany
+    public function carriers(): HasMany
     {
-        return $this->hasMany(ApplicationLaboratory::class);
-    }
-
-    public function laboratories(): BelongsToMany
-    {
-        return $this->belongsToMany(Laboratory::class)->withPivot(['order', 'contact_name']);
+        return $this->hasMany(Carrier::class);
     }
 
     public function evaluationOffers(): HasMany

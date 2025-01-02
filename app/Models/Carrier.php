@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\JobTitle;
+use App\Enums\OrganizationType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -43,11 +46,18 @@ class Carrier extends Model
      * @var array
      */
     protected $fillable = [
+        'application_id',
+        'laboratory_id',
         'first_name',
         'last_name',
         'email',
         'phone',
-        'status',
+        'main_carrier',
+        'job_title',
+        'job_title_other',
+        'organization',
+        'organization_type',
+        'organization_type_other',
     ];
 
     /**
@@ -56,11 +66,19 @@ class Carrier extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
+        'id'                => 'integer',
+        'main_carrier'      => 'boolean',
+        'job_title'         => JobTitle::class,
+        'organization_type' => OrganizationType::class,
     ];
 
-    public function applications(): HasMany
+    public function application(): BelongsTo
     {
-        return $this->hasMany(Application::class);
+        return $this->belongsTo(Application::class);
+    }
+
+    public function laboratory(): BelongsTo
+    {
+        return $this->belongsTo(Laboratory::class);
     }
 }

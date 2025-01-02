@@ -49,7 +49,8 @@ class ProjectCallType extends Model
         'reference',
         'label_long',
         'label_short',
-        'dynamic_attributes'
+        'dynamic_attributes',
+        'lab_budget',
     ];
 
     /**
@@ -60,6 +61,7 @@ class ProjectCallType extends Model
     protected $casts = [
         'id'                 => 'integer',
         'dynamic_attributes' => 'json',
+        'lab_budget'         => 'boolean',
     ];
 
     public $translatable = ['label_long', 'label_short'];

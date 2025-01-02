@@ -92,6 +92,14 @@ return [
     'director_email' => 'Email du directeur',
     'regency'        => 'Tutelle du laboratoire (CNRS, Université ou Autre)',
 
+
+    // Carrier
+    'job_title'               => 'Statut / Fonction',
+    'job_title_other'         => 'Statut / Fonction (autre)',
+    'organization'            => 'Nom de la structure',
+    'organization_type'       => 'Type de structure',
+    'organization_type_other' => 'Type de structure (autre)',
+
     // User
     'first_name'            => 'Prénom',
     'last_name'             => 'Nom',

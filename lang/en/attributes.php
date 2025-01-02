@@ -92,6 +92,13 @@ return [
     'director_email' => 'Director Email',
     'regency'        => 'Laboratory Regency (CNRS, University or Other)',
 
+    // Carrier
+    'job_title'               => 'Status / Job Title',
+    'job_title_other'         => 'Status / Job Title (other)',
+    'organization'            => 'Organization Name',
+    'organization_type'       => 'Organization Type',
+    'organization_type_other' => 'Organization Type (other)',
+
     // User
     'first_name'            => 'First Name',
     'last_name'             => 'Last Name',
