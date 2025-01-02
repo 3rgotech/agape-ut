@@ -22,6 +22,7 @@ return [
     'number_of_study_fields' => 'Maximum Number of Study Fields',
     'number_of_keywords'     => 'Maximum Number of Keywords',
     'accepted_extensions'    => 'Accepted Extensions: :extensions',
+    'file_size_limit'        => 'Loaded file cannot exceed :size MB',
     'files'                  => [
         'applicationForm'        => 'Application Form',
         'financialForm'          => 'Financial Form',
@@ -43,6 +44,7 @@ return [
     'short_description'        => 'Short Description',
     'summary_fr'               => 'Public Summary (FR)',
     'summary_en'               => 'Public Summary (EN)',
+    'summary_help'             => 'Destined for wide distribution on TIRIS - Université de Toulouse media',
     'carrier'                  => 'Project Carrier',
     'carrier_status'           => 'Status',
     'contact_name'             => 'Contact Name',

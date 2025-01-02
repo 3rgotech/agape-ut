@@ -22,6 +22,7 @@ return [
     'number_of_study_fields' => 'Nombre maximum de champs disciplinaires',
     'number_of_keywords'     => 'Nombre maximum de mots clés',
     'accepted_extensions'    => 'Extensions acceptées : :extensions',
+    'file_size_limit'        => 'Le fichier chargé ne peut excéder :size Mo',
     'files'                  => [
         'applicationForm'        => 'Formulaire de Candidature',
         'financialForm'          => 'Formulaire Financier',
@@ -43,6 +44,7 @@ return [
     'short_description'        => 'Description courte',
     'summary_fr'               => 'Résumé public (FR)',
     'summary_en'               => 'Résumé public (EN)',
+    'summary_help'             => 'Destiné à une diffusion large sur les supports TIRIS - Université de Toulouse',
     'carrier'                  => 'Porteur/Coordinateur du projet',
     'carrier_status'           => 'Statut',
     'contact_name'             => 'Nom du contact',
