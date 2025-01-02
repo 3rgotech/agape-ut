@@ -1,6 +1,10 @@
 <?php
 
 return [
+
+    // Project Call Type
+    'lab_budget' => 'Ask for the budget of the laboratories carrying the application ?',
+
     // Project Call
     'project_call_type'      => 'Project Call Type',
     'year'                   => 'Year',
@@ -42,7 +46,7 @@ return [
     'carrier'                  => 'Project Carrier',
     'carrier_status'           => 'Status',
     'contact_name'             => 'Contact Name',
-    'main_laboratory'          => 'Main Laboratory',
+    'main_laboratory'          => 'Main Laboratories',
     'other_laboratories'       => 'Other Laboratories and Partners',
     'keywords'                 => 'Keywords',
     'amount_requested'         => 'Amount Requested',
@@ -93,8 +97,10 @@ return [
     'regency'        => 'Laboratory Regencies (CNRS, University or Other)',
 
     // Carrier
-    'job_title'               => 'Status / Job Title',
-    'job_title_other'         => 'Status / Job Title (other)',
+    'main_carrier'            => 'Project Carrier ?',
+    'linked_to_laboratory'    => 'Linked to a Laboratory ?',
+    'job_title'               => 'Job Title',
+    'job_title_other'         => 'Job Title (other)',
     'organization'            => 'Organization Name',
     'organization_type'       => 'Organization Type',
     'organization_type_other' => 'Organization Type (other)',

@@ -85,10 +85,13 @@ return [
         'sections'      => [
             'general'    => '1. Informations Générales',
             'scientific' => '2. Présentation scientifique du projet',
-            'budget'     => '3. Budget/Financement du projet',
-            'files'      => '4. Pièces complémentaires',
+            'carriers'   => '3. Equipe porteuse du projet',
+            'budget'     => '4. Budget/Financement du projet',
+            'files'      => '5. Pièces complémentaires',
         ],
 
+        'main_carrier_help'       => 'Vous ne pouvez avoir que 2 porteurs par équipe projet. Décochez-en un avant de pouvoir sélectionner celui-ci.',
+        'add_carrier'             => 'Ajouter un membre de l\'équipe projet',
         'laboratories_partners'   => 'Laboratoires / Partenaires',
         'laboratories_help'       => 'Vous pouvez choisir et/ou saisir jusqu\'à :count laboratoires.<br/>Le premier laboratoire de la liste doit être le porteur du projet. Utilisez les boutons pour réordonner les choix.',
         'add_laboratory'          => 'Ajouter un Laboratoire',

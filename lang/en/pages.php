@@ -85,10 +85,13 @@ return [
         'sections'      => [
             'general'    => '1. General Information',
             'scientific' => '2. Scientific Project Overview',
-            'budget'     => '3. Budget/Funding Information',
-            'files'      => '4. Additional Documents',
+            'carriers'   => '3. Project Team',
+            'budget'     => '4. Budget/Funding Information',
+            'files'      => '5. Additional Documents',
         ],
 
+        'main_carrier_help'       => 'You can only have 2 main carriers per project team. Uncheck one to be able to select this one.',
+        'add_carrier'             => 'Add a project team member',
         'laboratories_partners'   => 'Laboratories / Partners',
         'laboratories_help'       => 'You can choose and/or enter up to :count laboratories. The first laboratory on the list must be the lead of the project. Use the buttons to reorder your choices.',
         'add_laboratory'          => 'Add Laboratory',

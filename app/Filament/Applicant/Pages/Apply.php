@@ -179,6 +179,19 @@ class Apply extends Page implements HasForms
                     'order' => $i + 1
                 ]])->all()
         );
+
+        // Save carriers
+        $existingCarriers = collect($this->application->carriers()->pluck('id'));
+        foreach ($formData['carriers'] as $carrier) {
+            if (filled($carrier['id'])) {
+                $existingCarriers->reject(fn($id) => $id === intval($carrier['id']));
+                $this->application->carriers()->updateOrCreate(['id' => intval($carrier['id'])], $carrier);
+            } else {
+                $this->application->carriers()->create($carrier);
+            }
+        }
+        $this->application->carriers()->whereIn('id', $existingCarriers)->delete();
+
         $this->application->studyFields()->sync(array_map("intval", $formData["studyFields"]));
 
         // save files

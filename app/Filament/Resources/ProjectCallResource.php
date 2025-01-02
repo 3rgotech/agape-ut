@@ -11,12 +11,14 @@ use App\Models\Application;
 use App\Models\ProjectCall;
 use App\Settings\GeneralSettings;
 use App\Utils\MimeType;
+use Awcodes\Shout\Components\Shout;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,7 +37,7 @@ class ProjectCallResource extends Resource
     {
         $generalSettings = app(GeneralSettings::class);
         $files = collect(['applicationForm', 'financialForm', 'additionalInformation'])
-            ->filter(fn ($name) => $generalSettings->{'enable' . ucfirst($name)} ?? false);
+            ->filter(fn($name) => $generalSettings->{'enable' . ucfirst($name)} ?? false);
         return $form
             ->columns([
                 'default' => 1,
@@ -90,7 +92,7 @@ class ProjectCallResource extends Resource
                             ->after('evaluation_start_date')
                             ->required(),
                     ]),
-                AgapeForm::translatableFields($form, fn ($lang) => [
+                AgapeForm::translatableFields($form, fn($lang) => [
                     Forms\Components\TextInput::make('title.' . $lang)
                         ->label(__('attributes.title'))
                         ->columnSpanFull(),
@@ -147,7 +149,7 @@ class ProjectCallResource extends Resource
                     ->schema(
                         $files
                             ->map(
-                                fn ($fileName) => AgapeForm::fileField($fileName)
+                                fn($fileName) => AgapeForm::fileField($fileName)
                                     ->acceptedFileTypes(MimeType::getByExtensionList($generalSettings->{'extensions' . ucfirst($fileName)} ?? ''))
                             )
                             ->all()
@@ -234,7 +236,7 @@ class ProjectCallResource extends Resource
                 Tables\Columns\TextColumn::make('applications_count')
                     ->counts('applications')
                     ->label(__('resources.application_plural'))
-                    ->url(fn (ProjectCall $record): string => route('filament.admin.resources.applications.index') . '?tableFilters[project_call_id][value]=' . $record->id)
+                    ->url(fn(ProjectCall $record): string => route('filament.admin.resources.applications.index') . '?tableFilters[project_call_id][value]=' . $record->id)
                     ->sortable(),
                 AgapeTable::creatorColumn()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -256,26 +258,26 @@ class ProjectCallResource extends Resource
                         return $query
                             ->when(
                                 $data['status'] === ProjectCallStatus::PLANNED->value,
-                                fn (Builder $query): Builder => $query->whereDate('application_start_date', '>=', now()),
+                                fn(Builder $query): Builder => $query->whereDate('application_start_date', '>=', now()),
                             )
                             ->when(
                                 $data['status'] === ProjectCallStatus::APPLICATION->value,
-                                fn (Builder $query): Builder => $query->whereDate('application_start_date', '<=', now())
+                                fn(Builder $query): Builder => $query->whereDate('application_start_date', '<=', now())
                                     ->whereDate('application_end_date', '>=', now()),
                             )
                             ->when(
                                 $data['status'] === ProjectCallStatus::WAITING_FOR_EVALUATION->value,
-                                fn (Builder $query): Builder => $query->whereDate('application_end_date', '<=', now())
+                                fn(Builder $query): Builder => $query->whereDate('application_end_date', '<=', now())
                                     ->whereDate('evaluation_start_date', '>=', now()),
                             )
                             ->when(
                                 $data['status'] === ProjectCallStatus::EVALUATION->value,
-                                fn (Builder $query): Builder => $query->whereDate('evaluation_start_date', '<=', now())
+                                fn(Builder $query): Builder => $query->whereDate('evaluation_start_date', '<=', now())
                                     ->whereDate('evaluation_end_date', '>=', now()),
                             )
                             ->when(
                                 $data['status'] === ProjectCallStatus::FINISHED->value,
-                                fn (Builder $query): Builder => $query->whereDate('evaluation_end_date', '<=', now()),
+                                fn(Builder $query): Builder => $query->whereDate('evaluation_end_date', '<=', now()),
                             );
                     }),
                 Tables\Filters\TrashedFilter::make()
@@ -302,7 +304,7 @@ class ProjectCallResource extends Resource
                 Tables\Actions\DeleteAction::make()
                     ->label(__('admin.archive'))
                     ->icon('fas-box-archive')
-                    ->modalHeading(fn ($record) => __('admin.archive') . ' ' . $table->getRecordTitle($record))
+                    ->modalHeading(fn($record) => __('admin.archive') . ' ' . $table->getRecordTitle($record))
                     ->hidden(function (ProjectCall $record) {
                         if ($record->evaluation_end_date >= now()) {
                             return true;
@@ -314,36 +316,101 @@ class ProjectCallResource extends Resource
                     }),
                 Tables\Actions\RestoreAction::make(),
                 Tables\Actions\ActionGroup::make([
+                    ReplicateAction::make('replicate')
+                        ->label(__('admin.replicate'))
+                        ->excludeAttributes([
+                            'reference',
+                            'applications',
+                            'applications_count',
+                            'status',
+                            'creator_id',
+                            'created_at',
+                            'updated_at',
+                            'deleted_at'
+                        ])
+                        ->mutateRecordDataUsing(function (array $data): array {
+                            $data['year'] = now()->format('Y');
+                            $data['application_start_date'] = null;
+                            $data['application_end_date'] = null;
+                            $data['evaluation_start_date'] = null;
+                            $data['evaluation_end_date'] = null;
+                            return $data;
+                        })
+                        ->beforeReplicaSaved(function (ProjectCall $record) {
+                            // TODO : handle the data update on the replicated model
+                            dump($record);
+                        })
+                        ->form([
+                            Shout::make('duplication-info')
+                                ->content(__('admin.duplication_info'))
+                                ->columnSpanFull()
+                                ->icon('fas-info-circle')
+                                ->color(Color::Cyan),
+                            Forms\Components\TextInput::make('year')
+                                ->label(__('attributes.year'))
+                                ->columnSpanFull()
+                                ->numeric()
+                                ->minValue(2020)
+                                ->step(1)
+                                ->required(),
+                            Forms\Components\Section::make('dates')
+                                ->heading(__('admin.dates'))
+                                ->icon('fas-calendar')
+                                ->columns([
+                                    'default' => 1,
+                                    'sm'      => 2,
+                                ])
+                                ->collapsible()
+                                ->schema([
+                                    Forms\Components\DatePicker::make('application_start_date')
+                                        ->label(__('attributes.application_start_date'))
+                                        ->required()
+                                        ->minDate(today()->addDay()->format('Y-m-d')),
+                                    Forms\Components\DatePicker::make('application_end_date')
+                                        ->label(__('attributes.application_end_date'))
+                                        ->after('application_start_date')
+                                        ->required(),
+                                    Forms\Components\DatePicker::make('evaluation_start_date')
+                                        ->label(__('attributes.evaluation_start_date'))
+                                        ->after('application_end_date')
+                                        ->required(),
+                                    Forms\Components\DatePicker::make('evaluation_end_date')
+                                        ->label(__('attributes.evaluation_end_date'))
+                                        ->after('evaluation_start_date')
+                                        ->required(),
+                                ])
+                        ])
+                        ->icon('fas-copy'),
                     Tables\Actions\Action::make('export_zip')
                         ->label(__('admin.zip_export'))
                         ->color(Color::Cyan)
                         ->icon('fas-file-zipper')
-                        ->url(fn (ProjectCall $record) => route('export_zip.project_call', ['projectCall' => $record]))
-                        ->hidden(fn (ProjectCall $record) => $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
+                        ->url(fn(ProjectCall $record) => route('export_zip.project_call', ['projectCall' => $record]))
+                        ->hidden(fn(ProjectCall $record) => $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
                         ->openUrlInNewTab(),
                     Tables\Actions\Action::make('export_evaluations')
                         ->label(__('admin.application_excel_export'))
                         ->color(Color::Emerald)
                         ->icon('fas-file-excel')
-                        ->url(fn (ProjectCall $record) => route('export_application.project_call', ['projectCall' => $record]))
+                        ->url(fn(ProjectCall $record) => route('export_application.project_call', ['projectCall' => $record]))
                         ->openUrlInNewTab()
-                        ->hidden(fn (ProjectCall $record) => $record->application_start_date > now()),
+                        ->hidden(fn(ProjectCall $record) => $record->application_start_date > now()),
                     Tables\Actions\Action::make('export_evaluations')
                         ->label(__('admin.evaluation_pdf_export'))
                         ->color(Color::Indigo)
                         ->icon('fas-file-pdf')
-                        ->url(fn (ProjectCall $record) => route('export_evaluation.project_call', ['projectCall' => $record]))
-                        ->hidden(fn (ProjectCall $record) => $record->status !== ProjectCallStatus::EVALUATION && $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
+                        ->url(fn(ProjectCall $record) => route('export_evaluation.project_call', ['projectCall' => $record]))
+                        ->hidden(fn(ProjectCall $record) => $record->status !== ProjectCallStatus::EVALUATION && $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
                         ->openUrlInNewTab()
-                        ->hidden(fn (ProjectCall $record) => $record->evaluation_start_date > now()),
+                        ->hidden(fn(ProjectCall $record) => $record->evaluation_start_date > now()),
                     Tables\Actions\Action::make('export_evaluations_anonymous')
                         ->label(__('admin.evaluation_pdf_export_anonymous'))
                         ->color(Color::Indigo)
                         ->icon('fas-file-pdf')
-                        ->url(fn (ProjectCall $record) => route('export_evaluation.project_call', ['projectCall' => $record, 'anonymized' => true]))
-                        ->hidden(fn (ProjectCall $record) => $record->status !== ProjectCallStatus::EVALUATION && $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
+                        ->url(fn(ProjectCall $record) => route('export_evaluation.project_call', ['projectCall' => $record, 'anonymized' => true]))
+                        ->hidden(fn(ProjectCall $record) => $record->status !== ProjectCallStatus::EVALUATION && $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
                         ->openUrlInNewTab()
-                        ->hidden(fn (ProjectCall $record) => $record->evaluation_start_date > now()),
+                        ->hidden(fn(ProjectCall $record) => $record->evaluation_start_date > now()),
                 ])
                     ->dropdownWidth(MaxWidth::Small),
             ])

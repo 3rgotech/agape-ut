@@ -20,7 +20,7 @@ return [
         'community'                  => 'Groupe communautaire ou citoyen (comité de quartier, etc.)',
         'startup'                    => 'Startup ou entreprise en phase de démarrage',
         'international_organization' => 'Organisation internationale (ONU, EU, etc.)',
-        'other_academic'             => 'Autre insittution académique',
+        'other_academic'             => 'Autre institution académique',
         'individual'                 => 'Particulier (citoyen, bénévole, etc.)',
         'other'                      => 'Autre',
     ]

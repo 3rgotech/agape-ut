@@ -50,10 +50,11 @@ trait HasCreator
      */
     public function scopeMine($query)
     {
+        $admins = User::role(['administrator', 'manager'])->pluck('id');
         return $query->when(
             !Auth::user()->hasAnyRole(['administrator', 'manager']),
-            fn (Builder $query) => $query->whereNull('creator_id')
-                ->orWhere('creator_id', Auth::id())
+            fn(Builder $query) => $query->whereNull('creator_id')
+                ->orWhereIn('creator_id', [...$admins, Auth::id()])
         );
     }
 

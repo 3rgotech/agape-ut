@@ -59,6 +59,8 @@ return [
     'private'                         => 'Private',
     'make_private'                    => 'Make Private',
     'preview_application_form'        => 'Preview application',
+    'replicate'                       => 'Duplicate',
+    'duplication_info'                => 'You can quickly duplicate a project call by filling in only the calendar (with a start date after today). All other fields will be copied identically and you can modify them later.',
     'zip_export'                      => 'ZIP Export',
     'pdf_export'                      => 'PDF Export',
     'pdf_export_anonymous'            => 'Anonymous PDF Export',

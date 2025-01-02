@@ -194,6 +194,11 @@ class Application extends Model implements HasMedia, WithSubmission
         return $this->hasMany(Carrier::class);
     }
 
+    public function laboratories(): BelongsToMany
+    {
+        return $this->belongsToMany(Laboratory::class, 'carriers', 'application_id', 'laboratory_id');
+    }
+
     public function evaluationOffers(): HasMany
     {
         return $this->hasMany(EvaluationOffer::class);
@@ -210,7 +215,7 @@ class Application extends Model implements HasMedia, WithSubmission
     public function mainLaboratory(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->laboratories->sortBy('pivot.order')->first()?->name ?? ''
+            get: fn() => $this->carriers->where('main_carrier', 1)->map(fn($carrier) => $carrier->laboratory->name)->all()
         );
     }
 

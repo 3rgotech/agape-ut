@@ -46,7 +46,7 @@ return [
     'carrier'                  => 'Porteur/Coordinateur du projet',
     'carrier_status'           => 'Statut',
     'contact_name'             => 'Nom du contact',
-    'main_laboratory'          => 'Laboratoire porteur',
+    'main_laboratory'          => 'Laboratoires porteurs',
     'other_laboratories'       => 'Autres Laboratoires et Partenaires',
     'keywords'                 => 'Mots-clés',
     'amount_requested'         => 'Montant demandé',
@@ -97,6 +97,8 @@ return [
     'regency'        => 'Tutelles du laboratoire (CNRS, Université ou Autre)',
 
     // Carrier
+    'main_carrier'            => 'Porteur ?',
+    'linked_to_laboratory'    => 'Rattaché à un laboratoire ?',
     'job_title'               => 'Intitulé de poste',
     'job_title_other'         => 'Intitulé de poste (autre)',
     'organization'            => 'Nom de la structure',

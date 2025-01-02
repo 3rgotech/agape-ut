@@ -59,6 +59,8 @@ return [
     'private'                         => 'Privé',
     'make_private'                    => 'Rendre privé',
     'preview_application_form'        => 'Prévisualiser la candidature',
+    'replicate'                       => 'Dupliquer',
+    'duplication_info'                => 'Vous pouvez dupliquer rapidement un appel à projets en renseignant seulement le calendrier (avec une date de démarrage postérieure à aujourd\'hui). Tous les autres champs seront copiés à l\'identique et vous pourrez les modifier ultérieurement.',
     'zip_export'                      => 'Export ZIP',
     'pdf_export'                      => 'Export PDF',
     'pdf_export_anonymous'            => 'Export PDF Anonyme',
