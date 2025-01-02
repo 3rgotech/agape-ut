@@ -45,7 +45,7 @@ return [
     'main_laboratory'          => 'Main Laboratory',
     'other_laboratories'       => 'Other Laboratories and Partners',
     'keywords'                 => 'Keywords',
-    'amount_requested'         => 'Amount Requested to MSHS-T',
+    'amount_requested'         => 'Amount Requested',
     'other_fundings'           => 'Total of Co-Fundings',
     'total_expected_income'    => 'Total Expected Income',
     'total_expected_outcome'   => 'Total Expected Outcome',
@@ -88,9 +88,9 @@ return [
     ],
 
     // Laboratory
-    'unit_code'      => 'Unit Code',
+    'unit_code'      => 'Pôle de recherche UT',
     'director_email' => 'Director Email',
-    'regency'        => 'Laboratory Regency (CNRS, University or Other)',
+    'regency'        => 'Laboratory Regencies (CNRS, University or Other)',
 
     // Carrier
     'job_title'               => 'Status / Job Title',

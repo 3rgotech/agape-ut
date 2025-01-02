@@ -45,7 +45,7 @@ return [
     'main_laboratory'          => 'Laboratoire porteur',
     'other_laboratories'       => 'Autres Laboratoires et Partenaires',
     'keywords'                 => 'Mots-clés',
-    'amount_requested'         => 'Montant demandé à la MSHS-T',
+    'amount_requested'         => 'Montant demandé',
     'other_fundings'           => 'Total des co-financements',
     'total_expected_income'    => 'Budget prévisionnel total (recettes)',
     'total_expected_outcome'   => 'Budget prévisionnel total (dépenses)',
@@ -88,14 +88,13 @@ return [
     ],
 
     // Laboratory
-    'unit_code'      => 'Code Unité',
+    'unit_code'      => 'Pôle de recherche UT',
     'director_email' => 'Email du directeur',
-    'regency'        => 'Tutelle du laboratoire (CNRS, Université ou Autre)',
-
+    'regency'        => 'Tutelles du laboratoire (CNRS, Université ou Autre)',
 
     // Carrier
-    'job_title'               => 'Statut / Fonction',
-    'job_title_other'         => 'Statut / Fonction (autre)',
+    'job_title'               => 'Intitulé de poste',
+    'job_title_other'         => 'Intitulé de poste (autre)',
     'organization'            => 'Nom de la structure',
     'organization_type'       => 'Type de structure',
     'organization_type_other' => 'Type de structure (autre)',

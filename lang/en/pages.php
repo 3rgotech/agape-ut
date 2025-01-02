@@ -15,14 +15,14 @@ return [
     ],
 
     'login' => [
-        'title'       => 'Welcome to AGAPE<br/>Please login',
+        'title'       => 'Welcome to The UT Call for Projects Platform<br/>Please login',
         'remember_me' => 'Remember me',
         'login'       => 'Login',
         'register'    => 'Register',
     ],
     'register' => [
         'title'         => 'Create an account',
-        'email_help'    => 'Only professional email addresses are allowed',
+        'email_help'    => '',
         'password_help' => 'Minimum 10 characters, at least 1 uppercase and 1 number',
         'login'         => 'Already registered? ',
         'register'      => 'Register',
@@ -121,11 +121,9 @@ return [
 
     'evaluate' => [
         'title_create'  => 'Evaluate Application',
-        'title_view'    => 'View Evaluation',
         'title_edit'    => 'Edit Evaluation',
         'title_correct' => 'Correct Evaluation',
         'help'          => 'Evaluation help',
-        'use_tabs'      => 'Use the tabs to navigate between the different sections',
 
         'criteria_description' => '<strong>Criterion Description</strong>',
         'grade'                => 'Grade',

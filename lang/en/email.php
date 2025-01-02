@@ -36,27 +36,27 @@ return [
 
     "application_force_submitted" => [
         "title"  => "Application submission",
-        "intro"  => "Your application to the project call :call has been manually submitted by the AGAPE platform administrator under the reference :reference.",
+        "intro"  => "Your application to the project call :call has been manually submitted by the The UT Call for Projects platform administrator under the reference :reference.",
         "action" => "View the application"
     ],
 
     "application_unsubmitted" => [
         "title"  => "Application devalidation",
-        "intro"  => "Your application to the project call :call (reference: :reference) has been devalidated by the AGAPE platform administrator.",
+        "intro"  => "Your application to the project call :call (reference: :reference) has been devalidated by the UT Call for Projects platform administrator.",
         "outro"  => "Reason: :justification",
         "action" => "Edit the application"
     ],
 
     "offer_created" => [
         "title"  => "Offer of evaluation",
-        "intro"  => "The AGAPE platform administrator has offered to evaluate a new applicant for the AAP [AAP].",
+        "intro"  => "The UT Call for Projects platform administrator has offered to evaluate a new applicant for the AAP [AAP].",
         "action" => "Respond",
         "outro"  => "Thank you for letting us know your decision as soon as possible."
     ],
 
     "offer_created_invite" => [
-        "title"  => "Invitation to join the AGAPE platform",
-        "intro"  => "The AGAPE platform administrator invites you to join the platform as :role, to participate in the evaluation of a candidate on the project call :projectcall",
+        "title"  => "Invitation to join the The UT Call for Projects platform",
+        "intro"  => "The The UT Call for Projects platform administrator invites you to join the platform as :role, to participate in the evaluation of a candidate on the project call :projectcall",
         "action" => "Sign up",
         "outro"  => "Thank you for letting us know your decision as soon as possible."
     ],
@@ -79,8 +79,8 @@ return [
     ],
 
     "offer_retry_invite" => [
-        "title"  => "Reminder: Invitation to join the AGAPE platform",
-        "intro"  => "We remind you that the AGAPE platform administrator invited you to join the platform as :role, to participate in the evaluation of a candidate on the project call :projectcall",
+        "title"  => "Reminder: Invitation to join the The UT Call for Projects platform",
+        "intro"  => "We remind you that the The UT Call for Projects platform administrator invited you to join the platform as :role, to participate in the evaluation of a candidate on the project call :projectcall",
         "action" => "Sign up",
     ],
 
@@ -104,19 +104,19 @@ return [
 
     "evaluation_force_submitted" => [
         "title" => "Submission of your Evaluation",
-        "intro" => "Your evaluation of the applicant :candidat for the project call :call has been manually submitted by the AGAPE platform administrator."
+        "intro" => "Your evaluation of the applicant :candidat for the project call :call has been manually submitted by the The UT Call for Projects platform administrator."
     ],
 
     "evaluation_unsubmitted" => [
         "title"  => "Evaluation devalidation",
-        "intro"  => "Your evaluation of the applicant :candidat for the project call :call has been devalidated by the AGAPE platform administrator.",
+        "intro"  => "Your evaluation of the applicant :candidat for the project call :call has been devalidated by the The UT Call for Projects platform administrator.",
         "outro"  => "Reason: :justification",
         "action" => "Edit the evaluation"
     ],
 
     "invitation" => [
-        "title"  => "Invitation to join the AGAPE platform",
-        "intro"  => "The AGAPE platform administrator invites you to join the platform as :role",
+        "title"  => "Invitation to join the The UT Call for Projects platform",
+        "intro"  => "The The UT Call for Projects platform administrator invites you to join the platform as :role",
         "action" => "Sign up"
     ],
 
@@ -127,19 +127,19 @@ return [
     ],
 
     "invitation_retry" => [
-        "title"  => "Reminder: Invitation to join the AGAPE platform",
-        "intro"  => "The AGAPE platform administrator invites you to join the platform as :role",
+        "title"  => "Reminder: Invitation to join the The UT Call for Projects platform",
+        "intro"  => "The The UT Call for Projects platform administrator invites you to join the platform as :role",
         "action" => "Sign up"
     ],
 
     "role_change" => [
         "title"  => "Change of access rights",
-        "intro"  => "The AGAPE platform administrator has changed your access rights. You now have the role :role."
+        "intro"  => "The The UT Call for Projects platform administrator has changed your access rights. You now have the role :role."
     ],
 
     "contact" => [
-        "title"        => "New message via the AGAPE contact form",
-        "intro"        => ":type :name (:oversight_affiliation ; :email) sent the following message through the AGAPE contact form: <br/><br/><blockquote>:message</blockquote>",
+        "title"        => "New message via the The UT Call for Projects contact form",
+        "intro"        => ":type :name (:oversight_affiliation ; :email) sent the following message through the The UT Call for Projects contact form: <br/><br/><blockquote>:message</blockquote>",
         "type_visitor" => "The visitor",
         "type_user"    => "The user",
         "action"       => "Respond"

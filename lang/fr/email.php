@@ -36,27 +36,27 @@ return [
 
     "application_force_submitted" => [
         "title"  => "Soumission de votre candidature",
-        "intro"  => "Votre candidature à l'appel à projets :call a été soumise manuellement par l'Administrateur de la plateforme AGAPE sous la référence :reference.",
+        "intro"  => "Votre candidature à l'appel à projets :call a été soumise manuellement par l'Administrateur de la plateforme Appel à Projets de l'UT sous la référence :reference.",
         "action" => "Visualiser la candidature",
     ],
 
     "application_unsubmitted" => [
         "title"  => "Dévalidation de votre candidature",
-        "intro"  => "Votre candidature à l'appel à projets :call (référence :reference) a été dévalidée par l'Administrateur de la plateforme AGAPE.",
+        "intro"  => "Votre candidature à l'appel à projets :call (référence :reference) a été dévalidée par l'Administrateur de la plateforme Appel à Projets de l'UT.",
         "outro"  => "Justification : :justification",
         "action" => "Modifier la candidature",
     ],
 
     "offer_created" => [
         "title"  => "Proposition d'évaluation",
-        "intro"  => "L'administrateur de la plateforme AGAPE vous a proposé d'évaluer une nouvelle candidature pour l'AAP [AAP].",
+        "intro"  => "L'administrateur de la plateforme Appel à Projets de l'UT vous a proposé d'évaluer une nouvelle candidature pour l'AAP [AAP].",
         "action" => "Répondre",
         "outro"  => "Merci de nous faire connaître votre choix dans les plus brefs délais.",
     ],
 
     "offer_created_invite" => [
-        "title"  => "Invitation à rejoindre la plateforme AGAPE",
-        "intro"  => "L'administrateur de la plateforme AGAPE vous invite à rejoindre l'application en tant que :role, afin de participer à l'évaluation d'une candidature sur l'appel à projets :projectcall",
+        "title"  => "Invitation à rejoindre la plateforme Appel à Projets de l'UT",
+        "intro"  => "L'administrateur de la plateforme Appel à Projets de l'UT vous invite à rejoindre l'application en tant que :role, afin de participer à l'évaluation d'une candidature sur l'appel à projets :projectcall",
         "action" => "Inscription",
         "outro"  => "Merci de nous faire connaître votre choix dans les plus brefs délais."
     ],
@@ -79,8 +79,8 @@ return [
     ],
 
     "offer_retry_invite" => [
-        "title"  => "Rappel : Invitation à rejoindre la plateforme AGAPE",
-        "intro"  => "Nous vous rappelons que l'administrateur de la plateforme AGAPE vous a invité à rejoindre l'application en tant que :role, afin de participer à l'évaluation d'une candidature sur l'appel à projets :projectcall",
+        "title"  => "Rappel : Invitation à rejoindre la plateforme Appel à Projets de l'UT",
+        "intro"  => "Nous vous rappelons que l'administrateur de la plateforme Appel à Projets de l'UT vous a invité à rejoindre l'application en tant que :role, afin de participer à l'évaluation d'une candidature sur l'appel à projets :projectcall",
         "action" => "Inscription",
     ],
 
@@ -104,19 +104,19 @@ return [
 
     "evaluation_force_submitted" => [
         "title" => "Soumission de votre Évaluation",
-        "intro" => "Votre évaluation de la candidature de :candidat pour l'appel à projets :call a été soumise manuellement par l'Administrateur de la plateforme AGAPE."
+        "intro" => "Votre évaluation de la candidature de :candidat pour l'appel à projets :call a été soumise manuellement par l'Administrateur de la plateforme Appel à Projets de l'UT."
     ],
 
     "evaluation_unsubmitted" => [
         "title"  => "Dévalidation de votre évaluation",
-        "intro"  => "Votre évaluation de la candidature de :candidat pour l'appel à projets :call a été dévalidée par l'Administrateur de la plateforme AGAPE.",
+        "intro"  => "Votre évaluation de la candidature de :candidat pour l'appel à projets :call a été dévalidée par l'Administrateur de la plateforme Appel à Projets de l'UT.",
         "outro"  => "Justification : :justification",
         "action" => "Modifier l'évaluation",
     ],
 
     "invitation" => [
-        "title"  => "Invitation à rejoindre la plateforme AGAPE",
-        "intro"  => "L'administrateur de la plateforme AGAPE vous invite à rejoindre l'application en tant que :role",
+        "title"  => "Invitation à rejoindre la plateforme Appel à Projets de l'UT",
+        "intro"  => "L'administrateur de la plateforme Appel à Projets de l'UT vous invite à rejoindre l'application en tant que :role",
         "action" => "Inscription"
     ],
 
@@ -127,19 +127,19 @@ return [
     ],
 
     "invitation_retry" => [
-        "title"  => "Rappel : Invitation à rejoindre la plateforme AGAPE",
-        "intro"  => "L'administrateur de la plateforme AGAPE vous invite à rejoindre l'application en tant que :role",
+        "title"  => "Rappel : Invitation à rejoindre la plateforme Appel à Projets de l'UT",
+        "intro"  => "L'administrateur de la plateforme Appel à Projets de l'UT vous invite à rejoindre l'application en tant que :role",
         "action" => "Inscription"
     ],
 
     "role_change" => [
         "title"  => "Modification de vos droits d'accès",
-        "intro"  => "L'administrateur de la plateforme AGAPE a modifié vos droits d'accès. Vous possédez désormais le rôle :role."
+        "intro"  => "L'administrateur de la plateforme Appel à Projets de l'UT a modifié vos droits d'accès. Vous possédez désormais le rôle :role."
     ],
 
     "contact" => [
-        "title"        => "Nouveau message via le formulaire de contact AGAPE",
-        "intro"        => ":type :name (:oversight_affiliation ; :email) vient d'envoyer le message suivant avec le formulaire de contact de la plateforme AGAPE: <br/><br/><blockquote>:message</blockquote>",
+        "title"        => "Nouveau message via le formulaire de contact Appel à Projets de l'UT",
+        "intro"        => ":type :name (:oversight_affiliation ; :email) vient d'envoyer le message suivant avec le formulaire de contact de la plateforme Appel à Projets de l'UT: <br/><br/><blockquote>:message</blockquote>",
         "type_visitor" => "Le visiteur",
         "type_user"    => "L'utilisateur",
         "action"       => "Répondre"

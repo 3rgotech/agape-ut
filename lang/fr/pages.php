@@ -15,14 +15,14 @@ return [
     ],
 
     'login' => [
-        'title'       => 'Bienvenue sur AGAPE<br/>Veuillez vous connecter',
+        'title'       => 'Bienvenue sur Appel à Projets de l\'UT<br/>Veuillez vous connecter',
         'remember_me' => 'Se souvenir de moi',
         'login'       => 'Connexion',
         'register'    => 'Inscription',
     ],
     'register' => [
         'title'         => 'Créer un compte',
-        'email_help'    => 'Seules les adresses email professionnelles sont autorisées',
+        'email_help'    => '',
         'password_help' => 'Minimum 10 caractères, dont au moins 1 majuscule et 1 chiffre',
         'login'         => 'Déjà inscrit·e ?',
         'register'      => 'Inscription',
@@ -121,11 +121,9 @@ return [
 
     'evaluate' => [
         'title_create'  => 'Évaluer la candidature',
-        'title_view'    => 'Visualiser l\'évaluation',
         'title_edit'    => 'Modifier l\'évaluation',
         'title_correct' => 'Corriger l\'évaluation',
         'help'          => 'Aide à l\'évaluation',
-        'use_tabs'      => 'Utilisez les onglets pour naviguer entre les différentes sections',
 
         'criteria_description' => '<strong>Description du critère</strong>',
         'grade'                => 'Note',
