@@ -39,18 +39,12 @@ class AgapeApplicationForm
     public static function fieldsPerSection(): array
     {
         $generalSettings = app(GeneralSettings::class);
-        $budgetFields = [
-            'amount_requested'       => __('attributes.amount_requested'),
-            'other_fundings'         => __('attributes.other_fundings'),
-        ];
+        $budgetFields = [];
         if ($generalSettings->enableBudgetIncomeOutcome) {
-            $budgetFields = array_merge(
-                $budgetFields,
-                [
-                    'total_expected_income'  => __('attributes.total_expected_income'),
-                    'total_expected_outcome' => __('attributes.total_expected_outcome'),
-                ]
-            );
+            $budgetFields = [
+                'total_expected_income'  => __('attributes.total_expected_income'),
+                'total_expected_outcome' => __('attributes.total_expected_outcome'),
+            ];
         }
 
         return [
@@ -68,7 +62,12 @@ class AgapeApplicationForm
             'carriers' => [
                 'carrier' => false,
             ],
-            'budget'     => $budgetFields,
+            'budget'     => [
+                'amount_requested'  => __('attributes.amount_requested'),
+                'other_fundings'    => __('attributes.other_fundings'),
+                ...$budgetFields,
+                'laboratory_budget' => __('attributes.laboratory_budget'),
+            ],
             'files'      => [
                 'applicationForm'       => __('attributes.files.applicationForm'),
                 'financialForm'         => __('attributes.files.financialForm'),
@@ -406,6 +405,10 @@ class AgapeApplicationForm
             case 'total_expected_outcome':
                 // If we have a helper text in translation, we use it
                 $helperText = (!$this->forEvaluation && __('pages.apply.' . $name . '_help') !== 'pages.apply.' . $name . '_help') ? __('pages.apply.' . $name . '_help') : null;
+
+                if ($name === 'amount_requested' && !$this->projectCall->hasMedia('financialForm')) {
+                    $helperText = null;
+                }
 
                 return Forms\Components\TextInput::make($name)
                     ->label(__('attributes.' . $name))

@@ -119,6 +119,7 @@ class Application extends Model implements HasMedia, WithSubmission
         'other_fundings',
         'total_expected_income',
         'total_expected_outcome',
+        'laboratory_budget',
         'selection_comity_opinion',
         'devalidation_message',
         'applicant_id',
@@ -138,6 +139,7 @@ class Application extends Model implements HasMedia, WithSubmission
         'other_fundings'         => 'float',
         'total_expected_income'  => 'float',
         'total_expected_outcome' => 'float',
+        'laboratory_budget'      => 'array',
         'applicant_id'           => 'integer',
     ];
 

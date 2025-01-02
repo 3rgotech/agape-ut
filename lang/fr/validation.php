@@ -227,11 +227,11 @@ return [
             'hcaptcha' => 'Le système anti-robots a rejeté votre demande. Veuillez réessayer.',
         ],
         'carrier' => [
-            'laboratory_required' => 'Ce champ est obligatoire.',
-            'job_title_required' => 'Ce champ est obligatoire.',
-            'job_title_other_required' => 'Ce champ est obligatoire.',
-            'organization_required' => 'Ce champ est obligatoire.',
-            'organization_type_required' => 'Ce champ est obligatoire.',
+            'laboratory_required'              => 'Ce champ est obligatoire.',
+            'job_title_required'               => 'Ce champ est obligatoire.',
+            'job_title_other_required'         => 'Ce champ est obligatoire.',
+            'organization_required'            => 'Ce champ est obligatoire.',
+            'organization_type_required'       => 'Ce champ est obligatoire.',
             'organization_type_other_required' => 'Ce champ est obligatoire.',
         ]
     ]

@@ -225,6 +225,14 @@ return [
         ],
         'h-captcha-response' => [
             'hcaptcha' => 'The anti-robot system has rejected your action. Please try again.',
+        ],
+        'carrier' => [
+            'laboratory_required'              => 'This field is required.',
+            'job_title_required'               => 'This field is required.',
+            'job_title_other_required'         => 'This field is required.',
+            'organization_required'            => 'This field is required.',
+            'organization_type_required'       => 'This field is required.',
+            'organization_type_other_required' => 'This field is required.',
         ]
     ]
 ];
