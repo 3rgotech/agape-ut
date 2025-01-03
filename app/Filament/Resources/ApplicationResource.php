@@ -42,6 +42,7 @@ class ApplicationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('projectCall.reference', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('projectCall.reference')
                     ->label(__('resources.project_call'))
