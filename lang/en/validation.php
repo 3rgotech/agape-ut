@@ -233,6 +233,7 @@ return [
             'organization_required'            => 'This field is required.',
             'organization_type_required'       => 'This field is required.',
             'organization_type_other_required' => 'This field is required.',
-        ]
+        ],
+        'array_keys_mismatch' => 'The values entered are not consistent.',
     ]
 ];

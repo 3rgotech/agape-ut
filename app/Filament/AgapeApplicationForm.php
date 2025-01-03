@@ -15,6 +15,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -223,6 +224,90 @@ class AgapeApplicationForm
                             ->label(__('attributes.organization_type_other'))
                             ->hidden(fn(Get $get) => $get('linkedToLaboratory') || $get('organization_type') !== OrganizationType::OTHER->value)
                             ->required(fn(Get $get) => !$get('linkedToLaboratory') && $get('organization_type') === OrganizationType::OTHER->value),
+                    ]);
+            case 'laboratory_budget':
+                if (!$this->projectCall->projectCallType->lab_budget) {
+                    return null;
+                }
+                return Forms\Components\Fieldset::make('laboratory_budget')
+                    ->label(__('attributes.laboratory_budget'))
+                    ->schema([
+                        Forms\Components\Toggle::make('managing_structure_is_lab')
+                            ->label(__('attributes.managing_structure_is_lab'))
+                            ->live()
+                            ->formatStateUsing(fn($record) => $record?->managingStructureIsLaboratory ?? true)
+                            ->default(true)
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                $entries = $get('laboratory_budget');
+                                dump($get('managing_structure_is_lab'));
+                                foreach ($entries as $key => $entry) {
+                                    if (!$state) {
+                                        $set('laboratory_budget.' . $key . '.laboratory_id', null);
+                                    } else {
+                                        $set('laboratory_budget.' . $key . '.organization', null);
+                                    }
+                                }
+                            }),
+                        Forms\Components\Repeater::make('laboratory_budget')
+                            ->label(false)
+                            ->maxItems(2)
+                            ->defaultItems(1)
+                            ->columnSpanFull()
+                            ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
+                            ->addActionLabel(__('pages.apply.add_laboratory_budget'))
+                            ->deletable()
+                            ->itemLabel(fn(array $state): ?string => $state['laboratory'] ?? null)
+                            ->schema([
+                                Forms\Components\Select::make('laboratory_id')
+                                    ->label(__('resources.laboratory'))
+                                    ->columnSpanFull()
+                                    ->options(function (Get $get) {
+                                        $carriers = collect($get('../../carriers'));
+                                        return Laboratory::whereIn('id', $carriers->pluck('laboratory_id')->unique()->filter())->pluck('name', 'id');
+                                    })
+                                    ->distinct()
+                                    ->hidden(fn(Get $get) => !$get('../../managing_structure_is_lab'))
+                                    ->required(fn(Get $get) => $get('../../managing_structure_is_lab')),
+                                Forms\Components\TextInput::make('organization')
+                                    ->label(__('attributes.organization'))
+                                    ->columnSpanFull()
+                                    ->required()
+                                    ->distinct()
+                                    ->hidden(fn(Get $get) => $get('../../managing_structure_is_lab'))
+                                    ->required(fn(Get $get) => !$get('../../managing_structure_is_lab')),
+                                Forms\Components\TextInput::make('total_amount')
+                                    ->label(__('attributes.total_amount'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('hr_expenses')
+                                    ->label(__('attributes.hr_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('operating_expenses')
+                                    ->label(__('attributes.operating_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('investment_expenses')
+                                    ->label(__('attributes.investment_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                            ])
                     ]);
             case 'laboratory':
                 return Forms\Components\Select::make('laboratory_id')

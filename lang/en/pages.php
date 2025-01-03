@@ -104,6 +104,7 @@ return [
         'create_study_field_help' => 'You must translate the title into all application languages',
         'amount_requested_help'   => 'You will need to attach a detailed budget in the financial form and attach it to section 4',
         'other_fundings_help'     => '(or other financial support)',
+        'add_laboratory_budget'   => 'Add a structure',
         'other_attachments_help'  => ':count maximum files',
         'download_template'       => 'Download Template',
         'devalidated_title'       => 'Your application was devalidated by the platform manager for the following reason',

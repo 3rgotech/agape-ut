@@ -5,6 +5,7 @@ namespace App\Rulesets;
 use App\Enums\JobTitle;
 use App\Enums\OrganizationType;
 use App\Models\ProjectCall;
+use App\Rules\ConsistentArrayKeys;
 use App\Settings\GeneralSettings;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -19,28 +20,36 @@ class Application
         $maxNumberOfStudyFields = $projectCall->extra_attributes->get("number_of_study_fields", null);
         $maxNumberOfDocuments = $projectCall->extra_attributes->get("number_of_documents", null);
         $rules = [
-            'title'                              => 'required|string|max:255',
-            'acronym'                            => 'required|string|max:255',
-            'studyFields'                        => ['required', 'array', 'min:1', filled($maxNumberOfStudyFields) ? 'max:' . $maxNumberOfStudyFields : null],
-            'summary.fr'                         => 'required',
-            'summary.en'                         => 'required',
-            'keywords'                           => array_filter(['required', 'array', 'min:1', filled($maxNumberOfKeywords) ? 'max:' . $maxNumberOfKeywords : null]),
-            'keywords.*'                         => 'max:100',
-            'short_description'                  => 'required',
-            'carriers'                           => 'required|array|min:1',
-            'carriers.*.first_name'              => 'required|string|max:255',
-            'carriers.*.last_name'               => 'required|string|max:255',
-            'carriers.*.email'                   => 'required|string|max:255|email',
-            'carriers.*.phone'                   => 'required|string|max:255',
-            'carriers.*.laboratory_id'           => 'nullable|required_without:carriers.*.organization|exists:laboratories,id',
-            'carriers.*.job_title'               => ['nullable', 'required_with:carriers.*.laboratory_id', Rule::enum(JobTitle::class)],
-            'carriers.*.job_title_other'         => 'nullable|required_if:carriers.*.job_title,other|string|max:255',
-            'carriers.*.organization'            => 'nullable|required_without:carriers.*.laboratory_id|string|max:255',
-            'carriers.*.organization_type'       => ['nullable', 'required_with:carriers.*.organization', Rule::enum(OrganizationType::class)],
-            'carriers.*.organization_type_other' => 'nullable|required_if:carriers.*.organization_type,other|string|max:255',
-            'amount_requested'                   => 'required|numeric|min:0',
-            'other_fundings'                     => 'required|numeric|min:0',
-            'applicationForm'                    => ($generalSettings->enableApplicationForm && $projectCall->hasMedia('applicationForm'))
+            'title'                                   => 'required|string|max:255',
+            'acronym'                                 => 'required|string|max:255',
+            'studyFields'                             => ['required', 'array', 'min:1', filled($maxNumberOfStudyFields) ? 'max:' . $maxNumberOfStudyFields : null],
+            'summary.fr'                              => 'required',
+            'summary.en'                              => 'required',
+            'keywords'                                => array_filter(['required', 'array', 'min:1', filled($maxNumberOfKeywords) ? 'max:' . $maxNumberOfKeywords : null]),
+            'keywords.*'                              => 'max:100',
+            'short_description'                       => 'required',
+            'carriers'                                => 'required|array|min:1',
+            'carriers.*.first_name'                   => 'required|string|max:255',
+            'carriers.*.last_name'                    => 'required|string|max:255',
+            'carriers.*.email'                        => 'required|string|max:255|email',
+            'carriers.*.phone'                        => 'required|string|max:255',
+            'carriers.*.laboratory_id'                => 'nullable|required_without:carriers.*.organization|exists:laboratories,id',
+            'carriers.*.job_title'                    => ['nullable', 'required_with:carriers.*.laboratory_id', Rule::enum(JobTitle::class)],
+            'carriers.*.job_title_other'              => 'nullable|required_if:carriers.*.job_title,other|string|max:255',
+            'carriers.*.organization'                 => 'nullable|required_without:carriers.*.laboratory_id|string|max:255',
+            'carriers.*.organization_type'            => ['nullable', 'required_with:carriers.*.organization', Rule::enum(OrganizationType::class)],
+            'carriers.*.organization_type_other'      => 'nullable|required_if:carriers.*.organization_type,other|string|max:255',
+            'amount_requested'                        => 'required|numeric|min:0',
+            'other_fundings'                          => 'required|numeric|min:0',
+            'laboratory_budget'                       => ['array', 'min:1', 'max:2'],
+            'laboratory_budget.*'                     => 'required|array',
+            'laboratory_budget.*.laboratory_id'       => 'nullable|required_without:laboratory_budget.*.organization|exists:laboratories,id|distinct',
+            'laboratory_budget.*.organization'        => 'nullable|required_without:laboratory_budget.*.laboratory_id|string|max:255|distinct',
+            'laboratory_budget.*.total_amount'        => 'required|numeric|min:0',
+            'laboratory_budget.*.hr_expenses'         => 'required|numeric|min:0',
+            'laboratory_budget.*.operating_expenses'  => 'required|numeric|min:0',
+            'laboratory_budget.*.investment_expenses' => 'required|numeric|min:0',
+            'applicationForm'                         => ($generalSettings->enableApplicationForm && $projectCall->hasMedia('applicationForm'))
                 ? 'required|array|min:1'
                 : 'prohibited',
             'financialForm'                            => ($generalSettings->enableFinancialForm && $projectCall->hasMedia('financialForm'))
@@ -173,6 +182,8 @@ class Application
             'other_fundings'                         => __('attributes.other_fundings'),
             'total_expected_income'                  => __('attributes.total_expected_income'),
             'total_expected_outcome'                 => __('attributes.total_expected_outcome'),
+            'laboratory_budget.*.laboratory_id'      => __('resources.laboratory'),
+            'laboratory_budget.*.organization'       => __('attributes.organization'),
             'applicationForm'                        => __('attributes.files.applicationForm'),
             'financialForm'                          => __('attributes.files.financialForm'),
             'additionalInformation'                  => __('attributes.files.additionalInformation'),

@@ -214,6 +214,17 @@ class Application extends Model implements HasMedia, WithSubmission
         );
     }
 
+    public function managingStructureIsLaboratory(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $collection = collect($this->laboratory_budget ?? [])
+                    ->map(fn($item) => collect($item));
+                return $collection->isEmpty() || $collection->contains(fn($item) => $item->get("laboratory_id", null) !== null);
+            }
+        );
+    }
+
     public function getSubmissionNotification(string $name): ?string
     {
         return [

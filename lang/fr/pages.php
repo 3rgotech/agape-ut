@@ -104,6 +104,7 @@ return [
         'create_study_field_help' => 'Vous devez traduire l\'intitulé dans toutes les langues de l\'application',
         'amount_requested_help'   => 'Vous devrez joindre un budget précis et détaillé dans le formulaire financier à attacher dans la section 4',
         'other_fundings_help'     => '(ou autres soutiens financiers)',
+        'add_laboratory_budget'   => 'Ajouter une structure',
         'other_attachments_help'  => ':count fichiers maximum',
         'download_template'       => 'Télécharger le modèle',
         'devalidated_title'       => 'Votre candidature a été dévalidée par le gestionnaire de la plateforme pour la raison suivante',

@@ -167,6 +167,25 @@ class Apply extends Page implements HasForms
 
         $this->application->projectCall()->associate($this->projectCall);
         $this->application->fill(Arr::except($formData, ['carriers']));
+
+        // Save laboratory budget
+        $laboratoryBudget = [];
+        foreach ($formData['laboratory_budget'] as $item) {
+            $l = [
+                'total_amount'        => $item['total_amount'],
+                'hr_expenses'         => $item['hr_expenses'],
+                'operating_expenses'  => $item['operating_expenses'],
+                'investment_expenses' => $item['investment_expenses'],
+            ];
+            // Prioritize laboratory_id over organization
+            if (filled($item['laboratory_id'])) {
+                $l['laboratory_id'] = intval($item['laboratory_id']);
+            } else {
+                $l['organization'] = $item['organization'];
+            }
+            $laboratoryBudget[] = $l;
+        }
+        $this->application->laboratory_budget = $laboratoryBudget;
         $this->application->extra_attributes = AgapeApplicationForm::getExtraAttributes($this->projectCall, $this->form);
 
         $this->application->save();

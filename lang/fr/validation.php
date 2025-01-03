@@ -233,6 +233,7 @@ return [
             'organization_required'            => 'Ce champ est obligatoire.',
             'organization_type_required'       => 'Ce champ est obligatoire.',
             'organization_type_other_required' => 'Ce champ est obligatoire.',
-        ]
+        ],
+        'array_keys_mismatch' => 'Les valeurs saisies ne sont pas cohérentes.',
     ]
 ];
