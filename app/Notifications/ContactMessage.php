@@ -60,8 +60,6 @@ class ContactMessage extends Notification
             $message->bcc($bcc);
         }
 
-        $message->replyTo($this->data['email'], $this->data['name']);
-
         return $message;
     }
 
