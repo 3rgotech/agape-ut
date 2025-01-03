@@ -210,7 +210,7 @@ class Application extends Model implements HasMedia, WithSubmission
     public function mainLaboratory(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->carriers->where('main_carrier', 1)->map(fn($carrier) => $carrier->laboratory->name)->all()
+            get: fn() => $this->carriers->where('main_carrier', 1)->map(fn($carrier) => $carrier->laboratory?->name)->filter()->all()
         );
     }
 
