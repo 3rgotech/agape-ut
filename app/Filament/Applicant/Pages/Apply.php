@@ -92,6 +92,7 @@ class Apply extends Page implements HasForms
             $this->buildActions()
         ])
             ->model($this->application)
+            ->disabled(fn() => filled($this->application->submitted_at))
             ->statePath('data');
     }
 
@@ -102,7 +103,7 @@ class Apply extends Page implements HasForms
                 ->label(__('pages.apply.back'))
                 ->icon('fas-arrow-left')
                 ->color('secondary')
-                ->requiresConfirmation(fn(Component $livewire) => $livewire->isDirty())
+                ->requiresConfirmation(fn(Component $livewire) => $livewire->isDirty() && blank($this->application->submitted_at))
                 ->action(function () {
                     return redirect()->route('filament.applicant.pages.dashboard');
                 }),
