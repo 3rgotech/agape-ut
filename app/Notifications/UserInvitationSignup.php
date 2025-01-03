@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Invitation;
 use App\Models\User;
+use App\Settings\GeneralSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -47,6 +48,18 @@ class UserInvitationSignup extends Notification
         if ($this->user->email !== $this->invitation->email) {
             $message->outroLines[] = __('email.invitation_signup.outro', ['email' => $this->invitation->email]);
         }
+
+        $generalSettings = app(GeneralSettings::class);
+        if ($generalSettings->notificationsCc) {
+            $cc = array_map('trim', explode(',', $generalSettings->notificationsCc));
+            $message->cc($cc);
+        }
+
+        if ($generalSettings->notificationsBcc) {
+            $bcc = array_map('trim', explode(',', $generalSettings->notificationsBcc));
+            $message->bcc($bcc);
+        }
+
         return $message;
     }
 
