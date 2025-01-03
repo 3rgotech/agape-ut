@@ -128,6 +128,7 @@ return [
         'title_edit'    => 'Edit Evaluation',
         'title_correct' => 'Correct Evaluation',
         'help'          => 'Evaluation help',
+        'use_tabs'      => 'Use the tabs to navigate between the different sections',
 
         'criteria_description' => '<strong>Criterion Description</strong>',
         'grade'                => 'Grade',

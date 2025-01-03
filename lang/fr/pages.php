@@ -128,6 +128,7 @@ return [
         'title_edit'    => 'Modifier l\'évaluation',
         'title_correct' => 'Corriger l\'évaluation',
         'help'          => 'Aide à l\'évaluation',
+        'use_tabs'      => 'Utilisez les onglets pour naviguer entre les différentes sections',
 
         'criteria_description' => '<strong>Description du critère</strong>',
         'grade'                => 'Note',
