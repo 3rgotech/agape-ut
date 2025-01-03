@@ -9,6 +9,7 @@ use App\Models\Traits\HasSubmission;
 use App\Notifications\ApplicationForceSubmitted;
 use App\Notifications\ApplicationSubmittedAdmins;
 use App\Notifications\ApplicationSubmittedApplicant;
+use App\Notifications\ApplicationSubmittedLabDirectors;
 use App\Notifications\ApplicationUnsubmitted;
 use App\Rulesets\Application as ApplicationRuleset;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -228,10 +229,11 @@ class Application extends Model implements HasMedia, WithSubmission
     public function getSubmissionNotification(string $name): ?string
     {
         return [
-            'submittedUser'   => ApplicationSubmittedApplicant::class,
-            'submittedAdmins' => ApplicationSubmittedAdmins::class,
-            'unsubmitted'     => ApplicationUnsubmitted::class,
-            'forceSubmitted'  => ApplicationForceSubmitted::class,
+            'submittedUser'         => ApplicationSubmittedApplicant::class,
+            'submittedAdmins'       => ApplicationSubmittedAdmins::class,
+            'submittedLabDirectors' => ApplicationSubmittedLabDirectors::class,
+            'unsubmitted'           => ApplicationUnsubmitted::class,
+            'forceSubmitted'        => ApplicationForceSubmitted::class,
         ][$name] ?? null;
     }
 
@@ -239,6 +241,13 @@ class Application extends Model implements HasMedia, WithSubmission
     {
         return $this->projectCall->projectCallType->managers
             ->concat(User::role('administrator')->get());
+    }
+
+    public function resolveLabDirectors(): Collection|array
+    {
+        return $this->carriers->map(fn($carrier) => $carrier->laboratory?->director_email)
+            ->filter()
+            ->unique();
     }
 
     public function canBeUnsubmitted(): bool

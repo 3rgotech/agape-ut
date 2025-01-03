@@ -28,6 +28,13 @@ return [
         "action"            => "View the application"
     ],
 
+    "new_application_submitted_lab" => [
+        "title" => "TIRIS - Project submission",
+        "line1" => "You are receiving this message because you are identified as a contact person for a Toulouse site laboratory on the University of Toulouse project call platform.",
+        "line2" => "We inform you that the project __:application__ submitted by __:applicant__ mentions your laboratory among the involved laboratories for the TIRIS project call __:call__.",
+        "line3" => "No action is required from your part with TIRIS.",
+    ],
+
     "application_submitted" => [
         "title"  => "Application confirmation",
         "intro"  => "Your application to the project call :call has been submitted under the reference :reference.",

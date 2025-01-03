@@ -28,6 +28,13 @@ return [
         "action"            => "Visualiser la candidature",
     ],
 
+    "new_application_submitted_lab" => [
+        "title" => "TIRIS - Soumission de projet",
+        "line1" => "Vous recevez ce message car vous êtes identifié comme personne contact pour un laboratoire du site toulousain sur la plateforme d'appel à projets de l'Université de Toulouse.",
+        "line2" => "Nous vous informons que le projet __:application__ porté par __:applicant__ qui indique votre laboratoire parmi les laboratoires impliqués été déposé à l'appel à projets TIRIS __:call__.",
+        "line3" => "Aucune action de votre part auprès de TIRIS n'est requise.",
+    ],
+
     "application_submitted" => [
         "title"  => "Confirmation de candidature",
         "intro"  => "Votre candidature à l'appel à projets :call a bien été soumise sous la référence :reference.",

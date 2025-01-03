@@ -37,6 +37,14 @@ trait HasSubmission
                 $this->resolveCreator()?->notify(new ($notification)($this));
             }
 
+            $notification = $this->getSubmissionNotification('submittedLabDirectors');
+            if (filled($notification)) {
+                dump($this->resolveLabDirectors());
+                foreach ($this->resolveLabDirectors() as $email) {
+                    Notification::route('mail', $email)->notify(new ($notification)($this));
+                }
+            }
+
             $users = $this->resolveAdmins();
             $notification = $this->getSubmissionNotification('submittedAdmins');
             if (filled($notification)) {

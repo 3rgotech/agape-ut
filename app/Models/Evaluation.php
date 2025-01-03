@@ -101,6 +101,11 @@ class Evaluation extends Model implements WithSubmission
             ->concat(User::role('administrator')->get());
     }
 
+    public function resolveLabDirectors(): Collection|array
+    {
+        return [];
+    }
+
     public function resolveCreator(): ?\App\Models\User
     {
         return $this->evaluationOffer->expert;
