@@ -37,13 +37,13 @@ class Dashboard extends Page implements HasForms, HasActions
             ->pendingReply()
             ->get()
             // Keep only offers for call in the evaluation phase
-            ->filter(fn (EvaluationOffer $offer) => $offer->application->projectCall->canEvaluate())
+            ->filter(fn(EvaluationOffer $offer) => $offer->application->projectCall->canEvaluate())
             ->all();
         $this->pendingEvaluation = EvaluationOffer::affectedToMe()
             ->accepted()
             ->get()
             // Keep only offers for call in the evaluation phase
-            ->filter(fn (EvaluationOffer $offer) => $offer->application->projectCall->canEvaluate())
+            ->filter(fn(EvaluationOffer $offer) => $offer->application->projectCall->canEvaluate())
             ->all();
         $this->doneEvaluation = EvaluationOffer::with('evaluation')
             ->affectedToMe()
@@ -51,7 +51,7 @@ class Dashboard extends Page implements HasForms, HasActions
             ->get()
             // Keep only offers for call NOT in the evaluation phase
             // (but with evaluationDone() scope, it means the evaluation period is in the past and expert has submitted the evaluation)
-            ->filter(fn (EvaluationOffer $offer) => !$offer->application->projectCall->canEvaluate())
+            ->filter(fn(EvaluationOffer $offer) => !$offer->application->projectCall->canEvaluate())
             ->all();
     }
 
@@ -73,7 +73,7 @@ class Dashboard extends Page implements HasForms, HasActions
             })
             ->modalSubmitActionLabel(__('pages.dashboard.expert.accept'))
             ->action(function (array $arguments) {
-                $offer = collect($this->openOffers)->firstWhere(fn ($o) => $o->id == $arguments['offer']);
+                $offer = collect($this->openOffers)->firstWhere(fn($o) => $o->id == $arguments['offer']);
                 if ($offer !== null) {
                     $offer->accept();
                     $this->loadData();
@@ -94,7 +94,7 @@ class Dashboard extends Page implements HasForms, HasActions
             ])
             ->modalSubmitActionLabel(__('pages.dashboard.expert.reject'))
             ->action(function (array $arguments, array $data) {
-                $offer = collect($this->openOffers)->firstWhere(fn ($o) => $o->id == $arguments['offer']);
+                $offer = collect($this->openOffers)->firstWhere(fn($o) => $o->id == $arguments['offer']);
                 if ($offer !== null) {
                     $offer->reject($data['message']);
                     $this->loadData();

@@ -174,7 +174,7 @@ class AgapeApplicationForm
                             ->helperText(function (Get $get, $state) {
                                 $allCarriers = collect($get('../../carriers'));
                                 $countActive = $allCarriers->filter(fn($carrier) => $carrier['main_carrier'] === true)->count();
-                                return (!$state && $countActive >= 2) ? __('pages.apply.main_carrier_help') : null;
+                                return (!$this->forEvaluation && !$state && $countActive >= 2) ? __('pages.apply.main_carrier_help') : null;
                             })
                             ->required(),
                         Forms\Components\Toggle::make('linkedToLaboratory')
