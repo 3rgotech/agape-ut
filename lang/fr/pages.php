@@ -16,14 +16,14 @@ return [
     ],
 
     'login' => [
-        'title'       => 'Bienvenue sur AGAPE<br/>Veuillez vous connecter',
+        'title'       => 'Bienvenue sur Appel à Projets de l\'UT<br/>Veuillez vous connecter',
         'remember_me' => 'Se souvenir de moi',
         'login'       => 'Connexion',
         'register'    => 'Inscription',
     ],
     'register' => [
         'title'         => 'Créer un compte',
-        'email_help'    => 'Seules les adresses email professionnelles sont autorisées',
+        'email_help'    => '',
         'password_help' => 'Minimum 10 caractères, dont au moins 1 majuscule et 1 chiffre',
         'login'         => 'Déjà inscrit·e ?',
         'register'      => 'Inscription',
@@ -86,10 +86,13 @@ return [
         'sections'      => [
             'general'    => '1. Informations Générales',
             'scientific' => '2. Présentation scientifique du projet',
-            'budget'     => '3. Budget/Financement du projet',
-            'files'      => '4. Pièces complémentaires',
+            'carriers'   => '3. Equipe porteuse du projet',
+            'budget'     => '4. Budget/Financement du projet',
+            'files'      => '5. Pièces complémentaires',
         ],
 
+        'main_carrier_help'       => 'Vous ne pouvez avoir que 2 porteurs par équipe projet. Décochez-en un avant de pouvoir sélectionner celui-ci.',
+        'add_carrier'             => 'Ajouter un membre de l\'équipe projet',
         'laboratories_partners'   => 'Laboratoires / Partenaires',
         'laboratories_help'       => 'Vous pouvez choisir et/ou saisir jusqu\'à :count laboratoires.<br/>Le premier laboratoire de la liste doit être le porteur du projet. Utilisez les boutons pour réordonner les choix.',
         'add_laboratory'          => 'Ajouter un Laboratoire',
@@ -102,6 +105,7 @@ return [
         'create_study_field_help' => 'Vous devez traduire l\'intitulé dans toutes les langues de l\'application',
         'amount_requested_help'   => 'Vous devrez joindre un budget précis et détaillé dans le formulaire financier à attacher dans la section 4',
         'other_fundings_help'     => '(ou autres soutiens financiers)',
+        'add_laboratory_budget'   => 'Ajouter une structure',
         'other_attachments_help'  => ':count fichiers maximum',
         'download_template'       => 'Télécharger le modèle',
         'devalidated_title'       => 'Votre candidature a été dévalidée par le gestionnaire de la plateforme pour la raison suivante',
@@ -122,7 +126,6 @@ return [
 
     'evaluate' => [
         'title_create'  => 'Évaluer la candidature',
-        'title_view'    => 'Visualiser l\'évaluation',
         'title_edit'    => 'Modifier l\'évaluation',
         'title_correct' => 'Corriger l\'évaluation',
         'help'          => 'Aide à l\'évaluation',

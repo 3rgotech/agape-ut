@@ -47,25 +47,29 @@ class ApplicationResource extends Resource
                 Tables\Columns\TextColumn::make('projectCall.reference')
                     ->label(__('resources.project_call'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('reference')
                     ->label(__('attributes.reference'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('creator.last_name')
                     ->label(__('admin.roles.applicant'))
                     ->formatStateUsing(fn(Application $application) => $application->creator->name),
                 Tables\Columns\TextColumn::make('acronym')
                     ->label(__('attributes.acronym'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('mainLaboratory')
                     ->label(__('attributes.main_laboratory'))
+                    ->listWithLineBreaks()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
-                            ->leftJoin('application_laboratory', 'applications.id', '=', 'application_laboratory.application_id')
-                            ->leftJoin('laboratories', 'application_laboratory.laboratory_id', '=', 'laboratories.id')
-                            ->where('application_laboratory.order', 1)
+                            ->leftJoin('carriers', 'applications.id', '=', 'carriers.application_id')
+                            ->leftJoin('laboratories', 'carriers.laboratory_id', '=', 'laboratories.id')
+                            ->where('carriers.main_carrier', 1)
                             ->orderBy('laboratories.name', $direction);
                     })
                     ->searchable(query: function (Builder $query, string $search): Builder {
@@ -73,10 +77,11 @@ class ApplicationResource extends Resource
                             ->whereHas(
                                 'laboratories',
                                 fn($query) => $query
-                                    ->where('application_laboratory.order', 1)
+                                    ->where('carriers.main_carrier', 1)
                                     ->where('name', 'like', "%{$search}%")
                             );
                     })
+                    ->toggleable(isToggledHiddenByDefault: false)
                 /* ->searchable()
                     ->sortable() */,
                 AgapeTable::submissionStatusColumn(),

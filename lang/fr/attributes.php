@@ -1,6 +1,10 @@
 <?php
 
 return [
+
+    // Project Call Type
+    'lab_budget' => 'Demander le budget des laboratoires porteurs ?',
+
     // Project Call
     'project_call_type'      => 'Type d\'Appel',
     'year'                   => 'Année',
@@ -18,6 +22,7 @@ return [
     'number_of_study_fields' => 'Nombre maximum de champs disciplinaires',
     'number_of_keywords'     => 'Nombre maximum de mots clés',
     'accepted_extensions'    => 'Extensions acceptées : :extensions',
+    'file_size_limit'        => 'Le fichier chargé ne peut excéder :size Mo',
     'files'                  => [
         'applicationForm'        => 'Formulaire de Candidature',
         'financialForm'          => 'Formulaire Financier',
@@ -35,23 +40,30 @@ return [
     ],
 
     // Application
-    'acronym'                  => 'Acronyme',
-    'short_description'        => 'Description courte',
-    'summary_fr'               => 'Résumé public (FR)',
-    'summary_en'               => 'Résumé public (EN)',
-    'carrier'                  => 'Porteur/Coordinateur du projet',
-    'carrier_status'           => 'Statut',
-    'contact_name'             => 'Nom du contact',
-    'main_laboratory'          => 'Laboratoire porteur',
-    'other_laboratories'       => 'Autres Laboratoires et Partenaires',
-    'keywords'                 => 'Mots-clés',
-    'amount_requested'         => 'Montant demandé à la MSHS-T',
-    'other_fundings'           => 'Total des co-financements',
-    'total_expected_income'    => 'Budget prévisionnel total (recettes)',
-    'total_expected_outcome'   => 'Budget prévisionnel total (dépenses)',
-    'submitted_at'             => 'Date de soumission',
-    'devalidation_message'     => 'Raison de la dévalidation',
-    'selection_comity_opinion' => 'Avis du comité de sélection',
+    'acronym'                   => 'Acronyme',
+    'short_description'         => 'Description courte',
+    'summary_fr'                => 'Résumé public (FR)',
+    'summary_en'                => 'Résumé public (EN)',
+    'summary_help'              => 'Destiné à une diffusion large sur les supports TIRIS - Université de Toulouse',
+    'carrier'                   => 'Porteur/Coordinateur du projet',
+    'carrier_status'            => 'Statut',
+    'contact_name'              => 'Nom du contact',
+    'main_laboratory'           => 'Laboratoires porteurs',
+    'other_laboratories'        => 'Autres Laboratoires et Partenaires',
+    'keywords'                  => 'Mots-clés',
+    'amount_requested'          => 'Montant demandé',
+    'other_fundings'            => 'Total des co-financements',
+    'total_expected_income'     => 'Budget prévisionnel total (recettes)',
+    'total_expected_outcome'    => 'Budget prévisionnel total (dépenses)',
+    'laboratory_budget'         => 'Laboratoire(s) destinaire(s) des crédits',
+    'managing_structure_is_lab' => 'La structure gestionnaire est-elle un laboratoire ?',
+    'total_amount'              => 'Montant total',
+    'hr_expenses'               => 'Dépenses RH',
+    'operating_expenses'        => 'Dépenses de fonctionnement',
+    'investment_expenses'       => 'Dépenses d\'investissement',
+    'submitted_at'              => 'Date de soumission',
+    'devalidation_message'      => 'Raison de la dévalidation',
+    'selection_comity_opinion'  => 'Avis du comité de sélection',
 
     // Project Call Type
     'label_long'         => 'Label long',
@@ -88,9 +100,18 @@ return [
     ],
 
     // Laboratory
-    'unit_code'      => 'Code Unité',
+    'unit_code'      => 'Pôle de recherche UT',
     'director_email' => 'Email du directeur',
-    'regency'        => 'Tutelle du laboratoire (CNRS, Université ou Autre)',
+    'regency'        => 'Tutelles du laboratoire (CNRS, Université ou Autre)',
+
+    // Carrier
+    'main_carrier'            => 'Porteur ?',
+    'linked_to_laboratory'    => 'Rattaché à un laboratoire ?',
+    'job_title'               => 'Intitulé de poste',
+    'job_title_other'         => 'Intitulé de poste (autre)',
+    'organization'            => 'Nom de la structure',
+    'organization_type'       => 'Type de structure',
+    'organization_type_other' => 'Type de structure (autre)',
 
     // User
     'first_name'            => 'Prénom',

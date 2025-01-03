@@ -13,5 +13,6 @@ interface WithSubmission
     public function getSubmissionNotification(string $name): ?string;
     public function resolveCreator(): ?\App\Models\User;
     public function resolveAdmins(): \Illuminate\Support\Collection|array;
+    public function resolveLabDirectors(): \Illuminate\Support\Collection|array;
     public function canBeUnsubmitted(): bool;
 }

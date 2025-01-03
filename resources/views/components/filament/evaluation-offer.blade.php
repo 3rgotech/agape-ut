@@ -10,7 +10,7 @@
 <div class="offer-card-expert w-full rounded-3xl ring-1 ring-gray-200 flex flex-col items-stretch p-2"
     id="{{ $id }}">
     <div
-        class="flex-1 px-0 sm:px-8 pt-4 flex flex-col xl:flex-row space-y-2 xl:space-y-0 justify-between items-stretch xl:items-center">
+        class="flex-1 px-0 sm:px-8 pt-4 flex flex-col space-y-2 xl:space-y-0 justify-between items-stretch xl:items-center">
         <div class="flex-1 flex flex-row justify-center xl:justify-start items-center xl:items-start space-x-2">
             <h3 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center xl:text-start">
                 {{ $projectCall->projectCallType->label_long }} - {{ $projectCall->year }}
@@ -25,10 +25,15 @@
                 </button>
             </x-filament.project-call-display-modal>
         </div>
+        @if (filled($projectCall->title))
+            <p class="mt-1 text-lg leading-7 text-gray-600 dark:text-gray-400 px-8 text-center xl:text-start">
+                {{ $projectCall->title }}
+            </p>
+        @endif
         <h4
             class="text-base leading-6 text-indigo-600 flex flex-col md:flex-row justify-center items-stretch md:items-center gap-x-4">
             <span class="text-center text-indigo-600 font-semibold">
-                {{ __('pages.dashboard.expert.evaluation_period') }}
+                {{ __('pages.dashboard.expert.evaluation_period') . ' : ' }}
             </span>
             <span class="text-center flex items-center justify-center gap-x-4">
                 <span>
@@ -43,11 +48,6 @@
             </span>
         </h4>
     </div>
-    @if (filled($projectCall->title))
-        <p class="mt-1 text-base leading-7 text-gray-600 dark:text-gray-400 px-8 text-center xl:text-start">
-            {{ $projectCall->title }}
-        </p>
-    @endif
     <hr class="mx-16 my-2" />
     <p class="mt-1 text-lg font-bold leading-7 text-gray-800 dark:text-gray-200 px-8">
         {{ __('pages.dashboard.expert.application_by', ['title' => $application->title, 'applicant' => $application->creator->name]) }}

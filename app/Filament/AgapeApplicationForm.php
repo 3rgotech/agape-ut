@@ -2,14 +2,20 @@
 
 namespace App\Filament;
 
+use App\Enums\JobTitle;
+use App\Enums\OrganizationType;
 use App\Models\Laboratory;
 use App\Models\ProjectCall;
 use App\Models\StudyField;
 use App\Settings\GeneralSettings;
 use App\Utils\MimeType;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +31,7 @@ class AgapeApplicationForm
             Forms\Components\Hidden::make('project_call_id')->default($this->projectCall->id),
             self::buildSection('general'),
             self::buildSection('scientific'),
+            self::buildSection('carriers'),
             self::buildSection('budget'),
             self::buildSection('files'),
         ];
@@ -33,26 +40,18 @@ class AgapeApplicationForm
     public static function fieldsPerSection(): array
     {
         $generalSettings = app(GeneralSettings::class);
-        $budgetFields = [
-            'amount_requested'       => __('attributes.amount_requested'),
-            'other_fundings'         => __('attributes.other_fundings'),
-        ];
+        $budgetFields = [];
         if ($generalSettings->enableBudgetIncomeOutcome) {
-            $budgetFields = array_merge(
-                $budgetFields,
-                [
-                    'total_expected_income'  => __('attributes.total_expected_income'),
-                    'total_expected_outcome' => __('attributes.total_expected_outcome'),
-                ]
-            );
+            $budgetFields = [
+                'total_expected_income'  => __('attributes.total_expected_income'),
+                'total_expected_outcome' => __('attributes.total_expected_outcome'),
+            ];
         }
 
         return [
             'general'    => [
                 'acronym'      => __('attributes.acronym'),
                 'title'        => __('attributes.title'),
-                'carrier'      => __('attributes.carrier'),
-                'laboratories' => __('pages.apply.laboratories_partners'),
                 'studyFields'  => __('resources.study_field_plural'),
                 'keywords'     => __('attributes.keywords'),
             ],
@@ -61,7 +60,15 @@ class AgapeApplicationForm
                 'summary.fr'        => __('attributes.summary_fr'),
                 'summary.en'        => __('attributes.summary_en'),
             ],
-            'budget'     => $budgetFields,
+            'carriers' => [
+                'carrier' => false,
+            ],
+            'budget'     => [
+                'amount_requested'  => __('attributes.amount_requested'),
+                'other_fundings'    => __('attributes.other_fundings'),
+                ...$budgetFields,
+                'laboratory_budget' => __('attributes.laboratory_budget'),
+            ],
             'files'      => [
                 'applicationForm'       => __('attributes.files.applicationForm'),
                 'financialForm'         => __('attributes.files.financialForm'),
@@ -133,24 +140,221 @@ class AgapeApplicationForm
                     ->columnSpan(['default' => 1, 'sm' => 2, 'lg' => 3])
                     ->required();
             case 'carrier':
-                return Forms\Components\Fieldset::make('carrier')
-                    ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
+                return Forms\Components\Repeater::make('carriers')
+                    ->relationship('carriers')
+                    ->defaultItems(1)
+                    ->columnSpanFull()
+                    ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
+                    ->addActionLabel(__('pages.apply.add_carrier'))
+                    ->deletable()
+                    ->itemLabel(fn(array $state): ?string => $state['last_name'] . ' ' . $state['first_name'] ?? null)
                     ->schema([
-                        Forms\Components\TextInput::make('carrier.last_name')
-                            ->label(__('attributes.first_name'))
-                            ->required(),
-                        Forms\Components\TextInput::make('carrier.first_name')
+                        Forms\Components\Hidden::make('id'),
+                        Forms\Components\TextInput::make('last_name')
                             ->label(__('attributes.last_name'))
                             ->required(),
-                        Forms\Components\TextInput::make('carrier.email')
+                        Forms\Components\TextInput::make('first_name')
+                            ->label(__('attributes.first_name'))
+                            ->required(),
+                        Forms\Components\TextInput::make('email')
                             ->label(__('attributes.email'))
                             ->required()
                             ->email(),
-                        Forms\Components\TextInput::make('carrier.phone')
+                        Forms\Components\TextInput::make('phone')
                             ->label(__('attributes.phone'))
                             ->required(),
-                        Forms\Components\TextInput::make('carrier.status')
-                            ->label(__('attributes.carrier_status'))
+                        Forms\Components\Toggle::make('main_carrier')
+                            ->label(__('attributes.main_carrier'))
+                            ->live()
+                            ->disabled(function (Get $get, $state) {
+                                $allCarriers = collect($get('../../carriers'));
+                                $countActive = $allCarriers->filter(fn($carrier) => $carrier['main_carrier'] === true)->count();
+                                return !$state && $countActive >= 2;
+                            })
+                            ->helperText(function (Get $get, $state) {
+                                $allCarriers = collect($get('../../carriers'));
+                                $countActive = $allCarriers->filter(fn($carrier) => $carrier['main_carrier'] === true)->count();
+                                return (!$this->forEvaluation && !$state && $countActive >= 2) ? __('pages.apply.main_carrier_help') : null;
+                            })
+                            ->required(),
+                        Forms\Components\Toggle::make('linkedToLaboratory')
+                            ->label(__('attributes.linked_to_laboratory'))
+                            ->columnSpan(['default' => 1, 'sm' => 1, 'lg' => 3])
+                            ->formatStateUsing(fn($record) => $record?->linkedToLaboratory ?? true)
+                            ->live()
+                            ->default(false)
+                            ->afterStateUpdated(function ($state, $set) {
+                                if (!$state) {
+                                    $set('laboratory_id', null);
+                                    $set('job_title', null);
+                                    $set('job_title_other', null);
+                                } else {
+                                    $set('organization', null);
+                                    $set('organization_type', null);
+                                    $set('organization_type_other', null);
+                                }
+                            })
+                            ->required(),
+                        $this->getField('laboratory')
+                            ->columnSpan(['default' => 1, 'sm' => 2, 'lg' => 2])
+                            ->hidden(fn(Get $get) => !$get('linkedToLaboratory'))
+                            ->required(fn(Get $get) => $get('linkedToLaboratory')),
+                        Forms\Components\Select::make('job_title')
+                            ->label(__('attributes.job_title'))
+                            ->options(JobTitle::class)
+                            ->hidden(fn(Get $get) => !$get('linkedToLaboratory'))
+                            ->required(fn(Get $get) => $get('linkedToLaboratory'))
+                            ->live(),
+                        Forms\Components\TextInput::make('job_title_other')
+                            ->label(__('attributes.job_title_other'))
+                            ->hidden(fn(Get $get) => !$get('linkedToLaboratory') || $get('job_title') !== JobTitle::OTHER->value)
+                            ->required(fn(Get $get) => $get('linkedToLaboratory') && $get('job_title') === JobTitle::OTHER->value),
+                        Forms\Components\TextInput::make('organization')
+                            ->label(__('attributes.organization'))
+                            ->columnSpan(['default' => 1, 'sm' => 2, 'lg' => 2])
+                            ->hidden(fn(Get $get) => $get('linkedToLaboratory'))
+                            ->required(fn(Get $get) => !$get('linkedToLaboratory')),
+                        Forms\Components\Select::make('organization_type')
+                            ->label(__('attributes.organization_type'))
+                            ->options(OrganizationType::class)
+                            ->hidden(fn(Get $get) => $get('linkedToLaboratory'))
+                            ->required(fn(Get $get) => !$get('linkedToLaboratory'))
+                            ->live(),
+                        Forms\Components\TextInput::make('organization_type_other')
+                            ->label(__('attributes.organization_type_other'))
+                            ->hidden(fn(Get $get) => $get('linkedToLaboratory') || $get('organization_type') !== OrganizationType::OTHER->value)
+                            ->required(fn(Get $get) => !$get('linkedToLaboratory') && $get('organization_type') === OrganizationType::OTHER->value),
+                    ]);
+            case 'laboratory_budget':
+                if (!$this->projectCall->projectCallType->lab_budget) {
+                    return null;
+                }
+                return Forms\Components\Fieldset::make('laboratory_budget')
+                    ->label(__('attributes.laboratory_budget'))
+                    ->schema([
+                        Forms\Components\Toggle::make('managing_structure_is_lab')
+                            ->label(__('attributes.managing_structure_is_lab'))
+                            ->live()
+                            ->formatStateUsing(fn($record) => $record?->managingStructureIsLaboratory ?? true)
+                            ->default(true)
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                $entries = $get('laboratory_budget');
+                                dump($get('managing_structure_is_lab'));
+                                foreach ($entries as $key => $entry) {
+                                    if (!$state) {
+                                        $set('laboratory_budget.' . $key . '.laboratory_id', null);
+                                    } else {
+                                        $set('laboratory_budget.' . $key . '.organization', null);
+                                    }
+                                }
+                            }),
+                        Forms\Components\Repeater::make('laboratory_budget')
+                            ->label(false)
+                            ->maxItems(2)
+                            ->defaultItems(1)
+                            ->columnSpanFull()
+                            ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
+                            ->addActionLabel(__('pages.apply.add_laboratory_budget'))
+                            ->deletable()
+                            ->itemLabel(fn(array $state): ?string => $state['laboratory'] ?? null)
+                            ->schema([
+                                Forms\Components\Select::make('laboratory_id')
+                                    ->label(__('resources.laboratory'))
+                                    ->columnSpanFull()
+                                    ->options(function (Get $get) {
+                                        $carriers = collect($get('../../carriers'));
+                                        return Laboratory::whereIn('id', $carriers->pluck('laboratory_id')->unique()->filter())->pluck('name', 'id');
+                                    })
+                                    ->distinct()
+                                    ->hidden(fn(Get $get) => !$get('../../managing_structure_is_lab'))
+                                    ->required(fn(Get $get) => $get('../../managing_structure_is_lab')),
+                                Forms\Components\TextInput::make('organization')
+                                    ->label(__('attributes.organization'))
+                                    ->columnSpanFull()
+                                    ->required()
+                                    ->distinct()
+                                    ->hidden(fn(Get $get) => $get('../../managing_structure_is_lab'))
+                                    ->required(fn(Get $get) => !$get('../../managing_structure_is_lab')),
+                                Forms\Components\TextInput::make('total_amount')
+                                    ->label(__('attributes.total_amount'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('hr_expenses')
+                                    ->label(__('attributes.hr_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('operating_expenses')
+                                    ->label(__('attributes.operating_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('investment_expenses')
+                                    ->label(__('attributes.investment_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                            ])
+                    ]);
+            case 'laboratory':
+                return Forms\Components\Select::make('laboratory_id')
+                    ->label(__('resources.laboratory'))
+                    ->relationship(
+                        name: 'laboratory',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn(Builder $query) => $query->where(
+                            fn(Builder $query) => $query->mine()
+                        )
+                    )
+                    ->getOptionLabelFromRecordUsing(fn(Laboratory $record) => $record->displayName)
+                    ->searchable(['name', 'regency', 'unit_code'])
+                    ->preload()
+                    ->createOptionModalHeading(__('pages.apply.create_laboratory'))
+                    ->editOptionModalHeading(__('pages.apply.edit_laboratory'))
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label(__('attributes.name'))
+                            ->required(),
+                        Forms\Components\TextInput::make('unit_code')
+                            ->label(__('attributes.unit_code'))
+                            ->required(),
+                        Forms\Components\TextInput::make('director_email')
+                            ->label(__('attributes.director_email'))
+                            ->required()
+                            ->email(),
+                        Forms\Components\TextInput::make('regency')
+                            ->label(__('attributes.regency'))
+                            ->required(),
+                    ])
+                    ->editOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label(__('attributes.name'))
+                            ->disabled()
+                            ->required(),
+                        Forms\Components\TextInput::make('unit_code')
+                            ->label(__('attributes.unit_code'))
+                            ->disabled()
+                            ->required(),
+                        Forms\Components\TextInput::make('director_email')
+                            ->label(__('attributes.director_email'))
+                            ->email()
+                            ->required(),
+                        Forms\Components\TextInput::make('regency')
+                            ->label(__('attributes.regency'))
+                            ->disabled()
                             ->required(),
                     ]);
             case 'laboratories':
@@ -174,53 +378,7 @@ class AgapeApplicationForm
                                 ->mutateRelationshipDataBeforeSaveUsing(fn(array $data) => filled($data['laboratory_id'] ?? null) ? $data : null)
                                 ->mutateRelationshipDataBeforeCreateUsing(fn(array $data) => filled($data['laboratory_id'] ?? null) ? $data : null)
                                 ->schema([
-                                    Forms\Components\Select::make('laboratory_id')
-                                        ->label(__('resources.laboratory'))
-                                        ->relationship(
-                                            name: 'laboratory',
-                                            titleAttribute: 'name',
-                                            modifyQueryUsing: fn(Builder $query) => $query->where(
-                                                fn(Builder $query) => $query->mine()
-                                            )
-                                        )
-                                        ->getOptionLabelFromRecordUsing(fn(Laboratory $record) => $record->displayName)
-                                        ->searchable(['name', 'regency', 'unit_code'])
-                                        ->preload()
-                                        ->createOptionModalHeading(__('pages.apply.create_laboratory'))
-                                        ->editOptionModalHeading(__('pages.apply.edit_laboratory'))
-                                        ->createOptionForm([
-                                            Forms\Components\TextInput::make('name')
-                                                ->label(__('attributes.name'))
-                                                ->required(),
-                                            Forms\Components\TextInput::make('unit_code')
-                                                ->label(__('attributes.unit_code'))
-                                                ->required(),
-                                            Forms\Components\TextInput::make('director_email')
-                                                ->label(__('attributes.director_email'))
-                                                ->required()
-                                                ->email(),
-                                            Forms\Components\TextInput::make('regency')
-                                                ->label(__('attributes.regency'))
-                                                ->required(),
-                                        ])
-                                        ->editOptionForm([
-                                            Forms\Components\TextInput::make('name')
-                                                ->label(__('attributes.name'))
-                                                ->disabled()
-                                                ->required(),
-                                            Forms\Components\TextInput::make('unit_code')
-                                                ->label(__('attributes.unit_code'))
-                                                ->disabled()
-                                                ->required(),
-                                            Forms\Components\TextInput::make('director_email')
-                                                ->label(__('attributes.director_email'))
-                                                ->email()
-                                                ->required(),
-                                            Forms\Components\TextInput::make('regency')
-                                                ->label(__('attributes.regency'))
-                                                ->disabled()
-                                                ->required(),
-                                        ]),
+                                    $this->getField('laboratory'),
                                     Forms\Components\TextInput::make('contact_name')
                                         ->label(__('attributes.contact_name')),
                                 ])
@@ -283,7 +441,8 @@ class AgapeApplicationForm
                         'default' => 1,
                         'sm'      => 1,
                         'lg'      => 2,
-                    ]);
+                    ])
+                    ->helperText(__('attributes.summary_help'));
             case 'summary.en':
                 return AgapeForm::richTextEditor('summary.en')
                     ->required()
@@ -291,7 +450,8 @@ class AgapeApplicationForm
                         'default' => 1,
                         'sm'      => 1,
                         'lg'      => 2,
-                    ]);
+                    ])
+                    ->helperText(__('attributes.summary_help'));
             case 'studyFields':
                 return $this->projectCall->extra_attributes->number_of_study_fields > 0
                     ? Forms\Components\Select::make('studyFields')
@@ -330,6 +490,10 @@ class AgapeApplicationForm
             case 'total_expected_outcome':
                 // If we have a helper text in translation, we use it
                 $helperText = (!$this->forEvaluation && __('pages.apply.' . $name . '_help') !== 'pages.apply.' . $name . '_help') ? __('pages.apply.' . $name . '_help') : null;
+
+                if ($name === 'amount_requested' && !$this->projectCall->hasMedia('financialForm')) {
+                    $helperText = null;
+                }
 
                 return Forms\Components\TextInput::make($name)
                     ->label(__('attributes.' . $name))

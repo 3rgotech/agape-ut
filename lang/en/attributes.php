@@ -1,6 +1,10 @@
 <?php
 
 return [
+
+    // Project Call Type
+    'lab_budget' => 'Ask for the budget of the laboratories carrying the application ?',
+
     // Project Call
     'project_call_type'      => 'Project Call Type',
     'year'                   => 'Year',
@@ -18,6 +22,7 @@ return [
     'number_of_study_fields' => 'Maximum Number of Study Fields',
     'number_of_keywords'     => 'Maximum Number of Keywords',
     'accepted_extensions'    => 'Accepted Extensions: :extensions',
+    'file_size_limit'        => 'Loaded file cannot exceed :size MB',
     'files'                  => [
         'applicationForm'        => 'Application Form',
         'financialForm'          => 'Financial Form',
@@ -35,23 +40,30 @@ return [
     ],
 
     // Application
-    'acronym'                  => 'Acronym',
-    'short_description'        => 'Short Description',
-    'summary_fr'               => 'Public Summary (FR)',
-    'summary_en'               => 'Public Summary (EN)',
-    'carrier'                  => 'Project Carrier',
-    'carrier_status'           => 'Status',
-    'contact_name'             => 'Contact Name',
-    'main_laboratory'          => 'Main Laboratory',
-    'other_laboratories'       => 'Other Laboratories and Partners',
-    'keywords'                 => 'Keywords',
-    'amount_requested'         => 'Amount Requested to MSHS-T',
-    'other_fundings'           => 'Total of Co-Fundings',
-    'total_expected_income'    => 'Total Expected Income',
-    'total_expected_outcome'   => 'Total Expected Outcome',
-    'submitted_at'             => 'Submission Date',
-    'devalidation_message'     => 'Devalidation Message',
-    'selection_comity_opinion' => 'Selection Comity Opinion',
+    'acronym'                   => 'Acronym',
+    'short_description'         => 'Short Description',
+    'summary_fr'                => 'Public Summary (FR)',
+    'summary_en'                => 'Public Summary (EN)',
+    'summary_help'              => 'Destined for wide distribution on TIRIS - Université de Toulouse media',
+    'carrier'                   => 'Project Carrier',
+    'carrier_status'            => 'Status',
+    'contact_name'              => 'Contact Name',
+    'main_laboratory'           => 'Main Laboratories',
+    'other_laboratories'        => 'Other Laboratories and Partners',
+    'keywords'                  => 'Keywords',
+    'amount_requested'          => 'Amount Requested',
+    'other_fundings'            => 'Total of Co-Fundings',
+    'total_expected_income'     => 'Total Expected Income',
+    'total_expected_outcome'    => 'Total Expected Outcome',
+    'laboratory_budget'         => 'Laboratory(s) to be credited',
+    'managing_structure_is_lab' => 'Is the managing structure a laboratory ?',
+    'total_amount'              => 'Total Amount',
+    'hr_expenses'               => 'HR Expenses',
+    'operating_expenses'        => 'Operating Expenses',
+    'investment_expenses'       => 'Investment Expenses',
+    'submitted_at'              => 'Submission Date',
+    'devalidation_message'      => 'Devalidation Message',
+    'selection_comity_opinion'  => 'Selection Comity Opinion',
 
     // Project Call Type
     'label_long'         => 'Long Label',
@@ -88,9 +100,18 @@ return [
     ],
 
     // Laboratory
-    'unit_code'      => 'Unit Code',
+    'unit_code'      => 'Pôle de recherche UT',
     'director_email' => 'Director Email',
-    'regency'        => 'Laboratory Regency (CNRS, University or Other)',
+    'regency'        => 'Laboratory Regencies (CNRS, University or Other)',
+
+    // Carrier
+    'main_carrier'            => 'Project Carrier ?',
+    'linked_to_laboratory'    => 'Linked to a Laboratory ?',
+    'job_title'               => 'Job Title',
+    'job_title_other'         => 'Job Title (other)',
+    'organization'            => 'Organization Name',
+    'organization_type'       => 'Organization Type',
+    'organization_type_other' => 'Organization Type (other)',
 
     // User
     'first_name'            => 'First Name',

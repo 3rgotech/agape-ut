@@ -16,14 +16,14 @@ return [
     ],
 
     'login' => [
-        'title'       => 'Welcome to AGAPE<br/>Please login',
+        'title'       => 'Welcome to The UT Call for Projects Platform<br/>Please login',
         'remember_me' => 'Remember me',
         'login'       => 'Login',
         'register'    => 'Register',
     ],
     'register' => [
         'title'         => 'Create an account',
-        'email_help'    => 'Only professional email addresses are allowed',
+        'email_help'    => '',
         'password_help' => 'Minimum 10 characters, at least 1 uppercase and 1 number',
         'login'         => 'Already registered? ',
         'register'      => 'Register',
@@ -86,10 +86,13 @@ return [
         'sections'      => [
             'general'    => '1. General Information',
             'scientific' => '2. Scientific Project Overview',
-            'budget'     => '3. Budget/Funding Information',
-            'files'      => '4. Additional Documents',
+            'carriers'   => '3. Project Team',
+            'budget'     => '4. Budget/Funding Information',
+            'files'      => '5. Additional Documents',
         ],
 
+        'main_carrier_help'       => 'You can only have 2 main carriers per project team. Uncheck one to be able to select this one.',
+        'add_carrier'             => 'Add a project team member',
         'laboratories_partners'   => 'Laboratories / Partners',
         'laboratories_help'       => 'You can choose and/or enter up to :count laboratories. The first laboratory on the list must be the lead of the project. Use the buttons to reorder your choices.',
         'add_laboratory'          => 'Add Laboratory',
@@ -102,6 +105,7 @@ return [
         'create_study_field_help' => 'You must translate the title into all application languages',
         'amount_requested_help'   => 'You will need to attach a detailed budget in the financial form and attach it to section 4',
         'other_fundings_help'     => '(or other financial support)',
+        'add_laboratory_budget'   => 'Add a structure',
         'other_attachments_help'  => ':count maximum files',
         'download_template'       => 'Download Template',
         'devalidated_title'       => 'Your application was devalidated by the platform manager for the following reason',
@@ -122,7 +126,6 @@ return [
 
     'evaluate' => [
         'title_create'  => 'Evaluate Application',
-        'title_view'    => 'View Evaluation',
         'title_edit'    => 'Edit Evaluation',
         'title_correct' => 'Correct Evaluation',
         'help'          => 'Evaluation help',

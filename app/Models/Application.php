@@ -9,6 +9,7 @@ use App\Models\Traits\HasSubmission;
 use App\Notifications\ApplicationForceSubmitted;
 use App\Notifications\ApplicationSubmittedAdmins;
 use App\Notifications\ApplicationSubmittedApplicant;
+use App\Notifications\ApplicationSubmittedLabDirectors;
 use App\Notifications\ApplicationUnsubmitted;
 use App\Rulesets\Application as ApplicationRuleset;
 use App\Settings\GeneralSettings;
@@ -120,6 +121,7 @@ class Application extends Model implements HasMedia, WithSubmission
         'other_fundings',
         'total_expected_income',
         'total_expected_outcome',
+        'laboratory_budget',
         'selection_comity_opinion',
         'devalidation_message',
         'applicant_id',
@@ -139,15 +141,9 @@ class Application extends Model implements HasMedia, WithSubmission
         'other_fundings'         => 'float',
         'total_expected_income'  => 'float',
         'total_expected_outcome' => 'float',
+        'laboratory_budget'      => 'array',
         'applicant_id'           => 'integer',
     ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ['studyFields', 'laboratories'];
 
     public $translatable = ['summary'];
 
@@ -190,14 +186,14 @@ class Application extends Model implements HasMedia, WithSubmission
         return $this->belongsToMany(StudyField::class);
     }
 
-    public function applicationLaboratories(): HasMany
+    public function carriers(): HasMany
     {
-        return $this->hasMany(ApplicationLaboratory::class);
+        return $this->hasMany(Carrier::class);
     }
 
     public function laboratories(): BelongsToMany
     {
-        return $this->belongsToMany(Laboratory::class)->withPivot(['order', 'contact_name']);
+        return $this->belongsToMany(Laboratory::class, 'carriers', 'application_id', 'laboratory_id');
     }
 
     public function evaluationOffers(): HasMany
@@ -216,17 +212,29 @@ class Application extends Model implements HasMedia, WithSubmission
     public function mainLaboratory(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->laboratories->sortBy('pivot.order')->first()?->name ?? ''
+            get: fn() => $this->carriers->where('main_carrier', 1)->map(fn($carrier) => $carrier->laboratory?->name)->filter()->all()
+        );
+    }
+
+    public function managingStructureIsLaboratory(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $collection = collect($this->laboratory_budget ?? [])
+                    ->map(fn($item) => collect($item));
+                return $collection->isEmpty() || $collection->contains(fn($item) => $item->get("laboratory_id", null) !== null);
+            }
         );
     }
 
     public function getSubmissionNotification(string $name): ?string
     {
         return [
-            'submittedUser'   => ApplicationSubmittedApplicant::class,
-            'submittedAdmins' => ApplicationSubmittedAdmins::class,
-            'unsubmitted'     => ApplicationUnsubmitted::class,
-            'forceSubmitted'  => ApplicationForceSubmitted::class,
+            'submittedUser'         => ApplicationSubmittedApplicant::class,
+            'submittedAdmins'       => ApplicationSubmittedAdmins::class,
+            'submittedLabDirectors' => ApplicationSubmittedLabDirectors::class,
+            'unsubmitted'           => ApplicationUnsubmitted::class,
+            'forceSubmitted'        => ApplicationForceSubmitted::class,
         ][$name] ?? null;
     }
 
@@ -249,6 +257,13 @@ class Application extends Model implements HasMedia, WithSubmission
         }
 
         return $recipients->unique('id');
+    }
+
+    public function resolveLabDirectors(): Collection|array
+    {
+        return $this->carriers->map(fn($carrier) => $carrier->laboratory?->director_email)
+            ->filter()
+            ->unique();
     }
 
     public function canBeUnsubmitted(): bool

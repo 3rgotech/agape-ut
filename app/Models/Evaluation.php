@@ -117,6 +117,11 @@ class Evaluation extends Model implements WithSubmission
         return $recipients->unique('id');
     }
 
+    public function resolveLabDirectors(): Collection|array
+    {
+        return [];
+    }
+
     public function resolveCreator(): ?\App\Models\User
     {
         return $this->evaluationOffer->expert;

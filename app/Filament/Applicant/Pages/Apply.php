@@ -92,6 +92,7 @@ class Apply extends Page implements HasForms
             $this->buildActions()
         ])
             ->model($this->application)
+            ->disabled(fn() => filled($this->application->submitted_at))
             ->statePath('data');
     }
 
@@ -102,7 +103,7 @@ class Apply extends Page implements HasForms
                 ->label(__('pages.apply.back'))
                 ->icon('fas-arrow-left')
                 ->color('secondary')
-                ->requiresConfirmation(fn(Component $livewire) => $livewire->isDirty())
+                ->requiresConfirmation(fn(Component $livewire) => $livewire->isDirty() && blank($this->application->submitted_at))
                 ->action(function () {
                     return redirect()->route('filament.applicant.pages.dashboard');
                 }),
@@ -166,20 +167,56 @@ class Apply extends Page implements HasForms
         }
 
         $this->application->projectCall()->associate($this->projectCall);
-        $this->application->fill($formData);
+        $this->application->fill(Arr::except($formData, ['carriers']));
+
+        // Save laboratory budget
+        $laboratoryBudget = [];
+        foreach ($formData['laboratory_budget'] as $item) {
+            $l = [
+                'total_amount'        => $item['total_amount'],
+                'hr_expenses'         => $item['hr_expenses'],
+                'operating_expenses'  => $item['operating_expenses'],
+                'investment_expenses' => $item['investment_expenses'],
+            ];
+            // Prioritize laboratory_id over organization
+            if (filled($item['laboratory_id'])) {
+                $l['laboratory_id'] = intval($item['laboratory_id']);
+            } else {
+                $l['organization'] = $item['organization'];
+            }
+            $laboratoryBudget[] = $l;
+        }
+        $this->application->laboratory_budget = $laboratoryBudget;
         $this->application->extra_attributes = AgapeApplicationForm::getExtraAttributes($this->projectCall, $this->form);
 
         $this->application->save();
 
-        $this->application->laboratories()->sync(
-            collect($formData['applicationLaboratories'] ?? [])
-                ->values()
-                ->filter(fn($lab) => filled($lab['laboratory_id']))
-                ->mapWithKeys(fn($lab, $i) => [intval($lab['laboratory_id']) => [
-                    'contact_name' => $lab['contact_name'],
-                    'order' => $i + 1
-                ]])->all()
-        );
+        // $this->application->laboratories()->sync(
+        //     collect($formData['applicationLaboratories'] ?? [])
+        //         ->values()
+        //         ->filter(fn($lab) => filled($lab['laboratory_id']))
+        //         ->mapWithKeys(fn($lab, $i) => [intval($lab['laboratory_id']) => [
+        //             'contact_name' => $lab['contact_name'],
+        //             'order' => $i + 1
+        //         ]])->all()
+        // );
+
+        // Save carriers
+        $obsoleteCarriers = collect($this->application->carriers()->pluck('id'));
+        foreach ($formData['carriers'] as $carrier) {
+            if (filled($carrier['id'])) {
+                dump('updating carrier ' . $carrier['id']);
+                $obsoleteCarriers = $obsoleteCarriers->reject(fn($id) => $id === intval($carrier['id']));
+                $this->application->carriers()->where('id', intval($carrier['id']))->update(
+                    Arr::only($carrier, ['first_name', 'last_name', 'email', 'phone', 'main_carrier', 'laboratory_id', 'job_title', 'job_title_other', 'organization', 'organization_type', 'organization_type_other'])
+                );
+            } else {
+                dump('creating carrier');
+                $this->application->carriers()->create($carrier);
+            }
+        }
+        $this->application->carriers()->whereIn('id', $obsoleteCarriers)->delete();
+
         $this->application->studyFields()->sync(array_map("intval", $formData["studyFields"] ?? []));
 
         // save files

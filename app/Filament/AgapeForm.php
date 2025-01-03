@@ -28,7 +28,7 @@ class AgapeForm
             ->relationship('creator', 'id')
             ->options(User::all()->pluck('name', 'id'))
             ->default(Auth::id())
-            ->hidden(fn (string $operation) => $operation === 'create');
+            ->hidden(fn(string $operation) => $operation === 'create');
     }
 
     public static function fileField(string $fileName): SpatieMediaLibraryFileUpload
@@ -36,7 +36,11 @@ class AgapeForm
         $generalSettings = app(GeneralSettings::class);
         return SpatieMediaLibraryFileUpload::make($fileName)
             ->label(__('attributes.files.' . $fileName))
-            ->helperText(__('attributes.accepted_extensions', ['extensions' => $generalSettings->{'extensions' . ucfirst($fileName)}]))
+            ->helperText(
+                __('attributes.accepted_extensions', ['extensions' => $generalSettings->{'extensions' . ucfirst($fileName)}])
+                    . ' ; '
+                    . __('attributes.file_size_limit', ['size' => intval(ini_get('upload_max_filesize'))])
+            )
             ->preserveFilenames()
             ->downloadable()
             ->disk('public')
@@ -56,7 +60,7 @@ class AgapeForm
             ->columns($form->getColumnsConfig())
             ->tabs(
                 collect(config('agape.languages'))->map(
-                    fn ($lang) =>
+                    fn($lang) =>
                     Tabs\Tab::make(Str::upper($lang))
                         ->icon('flag-4x3-' . match ($lang) {
                             'en'    => 'gb',
@@ -83,7 +87,7 @@ class AgapeForm
                 Repeater::make('notation')
                     ->hiddenLabel()
                     ->addActionLabel(__('admin.settings.actions.addNotation'))
-                    ->itemLabel(fn (array $state): ?string => (($state['title'] ?? [])['fr']) ?? null)
+                    ->itemLabel(fn(array $state): ?string => (($state['title'] ?? [])['fr']) ?? null)
                     ->columns(['sm' => 1])
                     ->default($default)
                     ->collapsible()
@@ -96,7 +100,7 @@ class AgapeForm
                             ->schema(
                                 collect(config('agape.languages'))
                                     ->map(
-                                        fn (string $lang) => TextInput::make('title.' . $lang)
+                                        fn(string $lang) => TextInput::make('title.' . $lang)
                                             ->label(Str::upper($lang))
                                             ->validationAttribute(Str::upper($lang))
                                             ->required()
@@ -110,7 +114,7 @@ class AgapeForm
                             ->schema(
                                 collect(config('agape.languages'))
                                     ->map(
-                                        fn (string $lang) => static::richTextEditor('description.' . $lang)
+                                        fn(string $lang) => static::richTextEditor('description.' . $lang)
                                             ->label(Str::upper($lang))
                                             ->validationAttribute(Str::upper($lang))
                                             ->required()

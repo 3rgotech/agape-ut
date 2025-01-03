@@ -96,6 +96,10 @@ return [
         'devalidated' => 'Devalidated',
     ],
 
+    'project_call_type' => [
+        'lab_budget_help' => 'If enabled, applicants will have to enter the budgets of the laboratories carrying the application (total amount, HR expenses, operating expenses and investment expenses).',
+    ],
+
     'application' => [
         'offers'                       => 'Experts (:count)',
         'evaluations'                  => 'Evaluations (:count)',
