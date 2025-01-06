@@ -34,10 +34,10 @@ class MigrateCarriers extends Command
                 $carrier = json_decode($application->carrier ?? '[]', false);
                 $attributes = ($laboratory->order === 1 && filled($carrier))
                     ? [
-                        'first_name'   => $carrier->first_name,
-                        'last_name'    => $carrier->last_name,
-                        'email'        => $carrier->email,
-                        'phone'        => $carrier->phone,
+                        'first_name'   => $carrier?->first_name ?? 'N/A',
+                        'last_name'    => $carrier?->last_name ?? 'N/A',
+                        'email'        => $carrier?->email ?? 'N/A',
+                        'phone'        => $carrier?->phone ?? 'N/A',
                         'main_carrier' => true,
                     ] :
                     [
