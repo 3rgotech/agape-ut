@@ -32,9 +32,9 @@
             </div>
 
             <div class="mt-6">
-                <x-label for="oversight_affiliation" value="{{ __('pages.contact.oversight_affiliation') }}" />
-                <x-input id="oversight_affiliation" class="block mt-1 w-full" type="text"
-                    name="oversight_affiliation" :value="old('oversight_affiliation')" />
+                <x-label for="project_call" value="{{ __('pages.contact.project_call') }}" />
+                <x-input id="project_call" class="block mt-1 w-full" type="text" name="project_call"
+                    :value="old('project_call')" />
             </div>
 
             <div class="mt-6">

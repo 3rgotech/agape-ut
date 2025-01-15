@@ -8,8 +8,8 @@ return [
     'legal'   => 'Terms and Conditions',
     'contact' => [
         'title'                 => 'Contact',
-        'oversight_affiliation' => 'Overseer Affiliation',
-        'project'               => 'Acronym or title of the related application',
+        'project_call'          => 'Project Call Title',
+        'project'               => 'Project Acronym',
         'message'               => 'Message',
         'send'                  => 'Send',
         'contact_sent'          => 'Message sent successfully!',

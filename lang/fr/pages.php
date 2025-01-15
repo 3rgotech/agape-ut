@@ -8,8 +8,8 @@ return [
     'legal'   => 'Mentions Légales',
     'contact' => [
         'title'                 => 'Contact',
-        'oversight_affiliation' => 'Tutelle de Rattachement',
-        'project'               => 'Acronyme ou titre de la candidature associée',
+        'project_call'          => 'Titre de l\'Appel à Projets',
+        'project'               => 'Acronyme du projet',
         'message'               => 'Message',
         'send'                  => 'Envoyer le message',
         'contact_sent'          => 'Message envoyé avec succès !',

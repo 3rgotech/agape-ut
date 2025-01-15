@@ -146,7 +146,7 @@ return [
 
     "contact" => [
         "title"        => "New message via the The UT Call for Projects contact form",
-        "intro"        => ":type :name (:oversight_affiliation ; :email) sent the following message through the The UT Call for Projects contact form: <br/><br/><ul><li><b>Nom : </b>:name</li><li><b>Role : </b>:role</li><li><b>Affiliation : </b>:oversight_affiliation</li><li><b>Email : </b>:email</li></ul><blockquote>:message</blockquote>",
+        "intro"        => ":type :name (:email) sent the following message through the The UT Call for Projects contact form: <br/><br/><ul><li><b>Name : </b>:name</li><li><b>Role : </b>:role</li><li><b>Project call : </b>:project_call</li><li><b>Project : </b>:project</li><li><b>Email : </b>:email</li></ul><blockquote>:message</blockquote>",
         "type_visitor" => "The visitor",
         "type_user"    => "The user",
         "action"       => "Respond"

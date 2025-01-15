@@ -43,7 +43,7 @@ class ContactMessage extends Notification
                 'role'                  => __('admin.roles.' . (Auth::user()?->role ?? 'visitor')),
                 'name'                  => $this->data['name'],
                 'email'                 => $this->data['email'],
-                'oversight_affiliation' => $this->data['oversight_affiliation'],
+                'project_call'          => $this->data['project_call'],
                 'project'               => $this->data['project'] ?? '?',
                 'message'               => $this->data['message'],
             ]))

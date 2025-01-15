@@ -16,7 +16,7 @@ class ContactController extends Controller
      */
     public function __invoke(ContactRequest $request)
     {
-        $data = $request->only(['name', 'email', 'oversight_affiliation', 'message']);
+        $data = $request->only(['name', 'email', 'project_call', 'project', 'message']);
         $data['visitor'] = !Auth::check();
         Notification::send(User::role(['administrator', 'manager'])->get(), new ContactMessage($data));
 

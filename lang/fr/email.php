@@ -146,7 +146,7 @@ return [
 
     "contact" => [
         "title"        => "Nouveau message via le formulaire de contact Appel à Projets de l'UT",
-        "intro"        => ":type :name (:oversight_affiliation ; :email) vient d'envoyer le message suivant avec le formulaire de contact de la plateforme Appel à Projets de l'UT: <br/><br/><ul><li><b>Nom : </b>:name</li><li><b>Role : </b>:role</li><li><b>Affiliation : </b>:oversight_affiliation</li><li><b>Email : </b>:email</li></ul><blockquote>:message</blockquote>",
+        "intro"        => ":type :name (:email) vient d'envoyer le message suivant avec le formulaire de contact de la plateforme Appel à Projets de l'UT: <br/><br/><ul><li><b>Nom : </b>:name</li><li><b>Role : </b>:role</li><li><b>Appel à projets : </b>:project_call</li><li><b>Projet : </b>:project</li><li><b>Email : </b>:email</li></ul><blockquote>:message</blockquote>",
         "type_visitor" => "Le visiteur",
         "type_user"    => "L'utilisateur",
         "action"       => "Répondre"
