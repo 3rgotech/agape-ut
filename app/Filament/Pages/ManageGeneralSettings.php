@@ -44,7 +44,7 @@ class ManageGeneralSettings extends SettingsPage
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->hasRole('administrator');
+        return Auth::user()?->hasRole('administrator') ?? false;
     }
 
     public function form(Form $form): Form
