@@ -253,7 +253,7 @@ class AgapeApplicationForm
                             ->maxItems(2)
                             ->defaultItems(1)
                             ->columnSpanFull()
-                            ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
+                            ->columns(['default' => 1, 'sm' => 3, 'lg' => 5])
                             ->addActionLabel(__('pages.apply.add_laboratory_budget'))
                             ->helperText(__('attributes.laboratory_budget_help'))
                             ->deletable()
@@ -302,6 +302,14 @@ class AgapeApplicationForm
                                     ->suffix('€'),
                                 Forms\Components\TextInput::make('investment_expenses')
                                     ->label(__('attributes.investment_expenses'))
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->suffix('€'),
+                                Forms\Components\TextInput::make('internship_expenses')
+                                    ->label(__('attributes.internship_expenses'))
                                     ->numeric()
                                     ->required()
                                     ->default(0)

@@ -62,7 +62,7 @@ return [
     'hr_expenses'               => 'HR Expenses',
     'operating_expenses'        => 'Operating Expenses',
     'investment_expenses'       => 'Investment Expenses',
-    'intership_expenses'        => 'Internship Expenses',
+    'internship_expenses'       => 'Internship Expenses',
     'submitted_at'              => 'Submission Date',
     'devalidation_message'      => 'Devalidation Message',
     'selection_comity_opinion'  => 'Selection Comity Opinion',

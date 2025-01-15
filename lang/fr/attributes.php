@@ -62,7 +62,7 @@ return [
     'hr_expenses'               => 'Dépenses RH',
     'operating_expenses'        => 'Dépenses de fonctionnement',
     'investment_expenses'       => 'Dépenses d\'investissement',
-    'intership_expenses'        => 'Gratifications de stage',
+    'internship_expenses'       => 'Gratifications de stage',
     'submitted_at'              => 'Date de soumission',
     'devalidation_message'      => 'Raison de la dévalidation',
     'selection_comity_opinion'  => 'Avis du comité de sélection',

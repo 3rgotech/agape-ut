@@ -255,6 +255,10 @@ class ApplicationExport
                             'label' => __('attributes.investment_expenses'),
                             'value' => $this->formatCurrency($item['investment_expenses']),
                         ],
+                        [
+                            'label' => __('attributes.internship_expenses'),
+                            'value' => $this->formatCurrency($item['internship_expenses']),
+                        ],
                     ]
                 ])->toArray();
             case 'laboratories':
