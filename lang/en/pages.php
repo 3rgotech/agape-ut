@@ -86,7 +86,7 @@ return [
         'sections'      => [
             'general'    => '1. General Information',
             'scientific' => '2. Scientific Project Overview',
-            'carriers'   => '3. Project Team',
+            'carriers'   => '3. Project Team Members',
             'budget'     => '4. Budget/Funding Information',
             'files'      => '5. Additional Documents',
         ],
