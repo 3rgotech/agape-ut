@@ -55,7 +55,8 @@ return [
     'other_fundings'            => 'Total of Co-Fundings',
     'total_expected_income'     => 'Total Expected Income',
     'total_expected_outcome'    => 'Total Expected Outcome',
-    'laboratory_budget'         => 'Laboratory(s) to be credited',
+    'laboratory_budget'         => 'Structure(s) to be credited',
+    'laboratory_budget_help'    => 'You can only choose up to 2 structures',
     'managing_structure_is_lab' => 'Is the managing structure a laboratory ?',
     'total_amount'              => 'Total Amount',
     'hr_expenses'               => 'HR Expenses',
@@ -105,6 +106,7 @@ return [
     'regency'        => 'Laboratory Regencies (CNRS, University or Other)',
 
     // Carrier
+    'member'                  => 'Member',
     'main_carrier'            => 'Project Carrier ?',
     'linked_to_laboratory'    => 'Linked to a Laboratory ?',
     'job_title'               => 'Job Title',

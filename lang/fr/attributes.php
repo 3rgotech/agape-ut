@@ -55,7 +55,8 @@ return [
     'other_fundings'            => 'Total des co-financements',
     'total_expected_income'     => 'Budget prévisionnel total (recettes)',
     'total_expected_outcome'    => 'Budget prévisionnel total (dépenses)',
-    'laboratory_budget'         => 'Laboratoire(s) destinaire(s) des crédits',
+    'laboratory_budget'         => 'Structure(s) destinaire(s) des crédits',
+    'laboratory_budget_help'    => 'Vous ne pouvez choisir que 2 structures',
     'managing_structure_is_lab' => 'La structure gestionnaire est-elle un laboratoire ?',
     'total_amount'              => 'Montant total',
     'hr_expenses'               => 'Dépenses RH',
@@ -105,6 +106,7 @@ return [
     'regency'        => 'Tutelles du laboratoire (CNRS, Université ou Autre)',
 
     // Carrier
+    'member'                  => 'Membre',
     'main_carrier'            => 'Porteur ?',
     'linked_to_laboratory'    => 'Rattaché à un laboratoire ?',
     'job_title'               => 'Intitulé de poste',

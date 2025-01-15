@@ -255,6 +255,7 @@ class AgapeApplicationForm
                             ->columnSpanFull()
                             ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
                             ->addActionLabel(__('pages.apply.add_laboratory_budget'))
+                            ->helperText(__('attributes.laboratory_budget_help'))
                             ->deletable()
                             ->itemLabel(fn(array $state): ?string => $state['laboratory'] ?? null)
                             ->schema([
