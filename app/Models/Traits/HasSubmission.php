@@ -40,7 +40,6 @@ trait HasSubmission
 
             $notification = $this->getSubmissionNotification('submittedLabDirectors');
             if (filled($notification)) {
-                dump($this->resolveLabDirectors());
                 foreach ($this->resolveLabDirectors() as $email) {
                     Notification::route('mail', $email)->notify(new ($notification)($this));
                 }

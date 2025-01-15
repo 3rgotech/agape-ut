@@ -205,13 +205,11 @@ class Apply extends Page implements HasForms
         $obsoleteCarriers = collect($this->application->carriers()->pluck('id'));
         foreach ($formData['carriers'] as $carrier) {
             if (filled($carrier['id'])) {
-                dump('updating carrier ' . $carrier['id']);
                 $obsoleteCarriers = $obsoleteCarriers->reject(fn($id) => $id === intval($carrier['id']));
                 $this->application->carriers()->where('id', intval($carrier['id']))->update(
                     Arr::only($carrier, ['first_name', 'last_name', 'email', 'phone', 'main_carrier', 'laboratory_id', 'job_title', 'job_title_other', 'organization', 'organization_type', 'organization_type_other'])
                 );
             } else {
-                dump('creating carrier');
                 $this->application->carriers()->create($carrier);
             }
         }
