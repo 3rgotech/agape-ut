@@ -2,7 +2,10 @@
 
 namespace App\Utils;
 
+use App\Enums\JobTitle;
+use App\Enums\OrganizationType;
 use App\Models\Application;
+use App\Models\Carrier;
 use App\Models\Laboratory;
 use App\Models\ProjectCall;
 use App\Models\StudyField;
@@ -41,13 +44,14 @@ class ApplicationExport
         ]);
 
         $inst = new self($application);
-        ray($inst->buildData());
 
         $data = [
             'application' => $application,
             'projectCall' => $application->projectCall,
             'data'        => $inst->buildData(),
         ];
+
+        dump($data);
 
         return [$title, self::getPdf('export.application', $data, $debug)];
     }
@@ -75,6 +79,7 @@ class ApplicationExport
             ],
             self::buildSection('general'),
             self::buildSection('scientific'),
+            self::buildSection('carriers'),
             self::buildSection('budget'),
             self::buildSection('files'),
         ];
@@ -83,26 +88,18 @@ class ApplicationExport
     public static function fieldsPerSection(): array
     {
         $generalSettings = app(GeneralSettings::class);
-        $budgetFields = [
-            'amount_requested'       => __('attributes.amount_requested'),
-            'other_fundings'         => __('attributes.other_fundings'),
-        ];
+        $budgetFields = [];
         if ($generalSettings->enableBudgetIncomeOutcome) {
-            $budgetFields = array_merge(
-                $budgetFields,
-                [
-                    'total_expected_income'  => __('attributes.total_expected_income'),
-                    'total_expected_outcome' => __('attributes.total_expected_outcome'),
-                ]
-            );
+            $budgetFields = [
+                'total_expected_income'  => __('attributes.total_expected_income'),
+                'total_expected_outcome' => __('attributes.total_expected_outcome'),
+            ];
         }
 
         return [
             'general'    => [
                 'acronym'      => __('attributes.acronym'),
                 'title'        => __('attributes.title'),
-                'carrier'      => __('attributes.carrier'),
-                'laboratories' => __('pages.apply.laboratories_partners'),
                 'studyFields'  => __('resources.study_field_plural'),
                 'keywords'     => __('attributes.keywords'),
             ],
@@ -111,7 +108,15 @@ class ApplicationExport
                 'summary.fr'        => __('attributes.summary_fr'),
                 'summary.en'        => __('attributes.summary_en'),
             ],
-            'budget'     => $budgetFields,
+            'carriers' => [
+                'carrier' => null,
+            ],
+            'budget'     => [
+                'amount_requested'  => __('attributes.amount_requested'),
+                'other_fundings'    => __('attributes.other_fundings'),
+                ...$budgetFields,
+                'laboratory_budget' => __('attributes.laboratory_budget'),
+            ],
             'files'      => [
                 'applicationForm'       => __('attributes.files.applicationForm'),
                 'financialForm'         => __('attributes.files.financialForm'),
@@ -138,11 +143,17 @@ class ApplicationExport
         $sectionFields = collect([]);
 
         foreach ($fieldsWithLabels as $fieldName => $label) {
+            if ($fieldName === 'carrier') {
+                $sectionFields->push(...$this->getFieldValue($fieldName));
+            } else {
+                $sectionFields->push(
+                    [
+                        'label' => $label,
+                        'value' => $this->getFieldValue($fieldName)
+                    ]
+                );
+            }
             $sectionFields->push(
-                [
-                    'label' => $label,
-                    'value' => $this->getFieldValue($fieldName)
-                ],
                 ...$dynamicFields
                     ->filter(fn($field) => $field['after_field'] === $fieldName)
                     ->map(fn($field) => [
@@ -178,28 +189,74 @@ class ApplicationExport
              * GENERAL SECTION
              */
             case 'carrier':
-                return [
-                    [
-                        'label' => __('attributes.first_name'),
-                        'value' => $this->application->carrier['first_name']
-                    ],
-                    [
-                        'label' => __('attributes.last_name'),
-                        'value' => $this->application->carrier['last_name']
-                    ],
-                    [
-                        'label' => __('attributes.email'),
-                        'value' => $this->application->carrier['email']
-                    ],
-                    [
-                        'label' => __('attributes.phone'),
-                        'value' => $this->application->carrier['phone']
-                    ],
-                    [
-                        'label' => __('attributes.carrier_status'),
-                        'value' => $this->application->carrier['status']
-                    ],
-                ];
+                return $this->application->carriers->map(fn(Carrier $carrier, int $index) => [
+                    'label' => null, //__('attributes.member') . ' #' . ($index + 1),
+                    'value' => [
+                        [
+                            'label' => __('attributes.first_name'),
+                            'value' => $carrier->first_name
+                        ],
+                        [
+                            'label' => __('attributes.last_name'),
+                            'value' => $carrier->last_name
+                        ],
+                        [
+                            'label' => __('attributes.email'),
+                            'value' => $carrier->email
+                        ],
+                        [
+                            'label' => __('attributes.phone'),
+                            'value' => $carrier->phone
+                        ],
+                        [
+                            'label' => __('attributes.main_carrier'),
+                            'value' => $carrier->main_carrier ? __('misc.yes') : __('misc.no')
+                        ],
+                        ...($carrier->linked_to_laboratory ? [
+                            [
+                                'label' => __('resources.laboratory'),
+                                'value' => $carrier->laboratory->name
+                            ],
+                            [
+                                'label' => __('attributes.job_title'),
+                                'value' => $carrier->job_title === JobTitle::OTHER ? $carrier->job_title_other : $carrier->job_title->getLabel()
+                            ],
+                        ] : [
+                            [
+                                'label' => __('attributes.organization'),
+                                'value' => $carrier->organization
+                            ],
+                            [
+                                'label' => __('attributes.organization_type'),
+                                'value' => $carrier->organization_type === OrganizationType::OTHER ? $carrier->organization_type_other : $carrier->organization_type->getLabel()
+                            ],
+                        ])
+                    ]
+                ])->toArray();
+            case 'laboratory_budget':
+                return collect($this->application->laboratory_budget)->map(fn($item) => [
+                    'label' => $this->application->managing_structure_is_laboratory
+                        ? (Laboratory::find($item['laboratory_id'])?->name ?? '?')
+                        : $item['organization'],
+                    'value' => [
+                        [
+                            'label' => __('attributes.total_amount'),
+                            'value' => $this->formatCurrency($item['total_amount']),
+                        ],
+                        [
+                            'label' => __('attributes.hr_expenses'),
+                            'value' => $this->formatCurrency($item['hr_expenses']),
+                        ],
+                        [
+                            'label' => __('attributes.operating_expenses'),
+                            'value' => $this->formatCurrency($item['operating_expenses']),
+                        ],
+                        [
+                            'label' => __('attributes.investment_expenses'),
+                            'value' => $this->formatCurrency($item['investment_expenses']),
+                        ],
+                    ]
+                ])->toArray();
             case 'laboratories':
                 return $this->application->laboratories->map(fn(Laboratory $laboratory, int $index) => [
                     'label' => $index === 0 ? __('attributes.main_laboratory') : (__('resources.laboratory') . ' #' . ($index + 1)),
@@ -238,7 +295,7 @@ class ApplicationExport
             case 'other_fundings':
             case 'total_expected_income':
             case 'total_expected_outcome':
-                return (new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY))->formatCurrency($this->application->{$name}, "EUR");
+                return $this->formatCurrency($this->application->{$name});
                 /**
                  * FILES SECTION
                  */
@@ -306,5 +363,12 @@ class ApplicationExport
             default:
                 return null;
         }
+    }
+
+    protected function formatCurrency(float $amount): string
+    {
+        $fmt = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
+        // Remove special characters (unbreakable spaces) causing issues on PDF display
+        return str_replace(["\u{00A0}", "\u{202F}"], " ", $fmt->formatCurrency($amount, "EUR"));
     }
 }

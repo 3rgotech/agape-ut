@@ -35,5 +35,8 @@ return [
         '403'  => 'You do not have permission to access the requested page.',
         '404'  => 'The requested page could not be found.',
         'back' => 'Back to home',
-    ]
+    ],
+
+    'yes' => 'Yes',
+    'no'  => 'No',
 ];

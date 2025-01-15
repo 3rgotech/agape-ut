@@ -7,7 +7,8 @@
         size: A4 portrait;
     }
 
-    section {
+    section,
+    .avoid-page-break {
         page-break-inside: avoid;
     }
 

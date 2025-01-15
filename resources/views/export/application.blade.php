@@ -23,30 +23,34 @@
             <table class="w-full">
                 @foreach ($section['fields'] as $field)
                     <tr>
-                        <th class="w-20">
-                            {{ $field['label'] }}
-                        </th>
+                        @if (filled($field['label']))
+                            <th class="w-20">
+                                {{ $field['label'] }}
+                            </th>
+                        @endif
                         @if (!is_array($field['value']))
-                            <td style="padding: 10px;">
+                            <td style="padding: 10px;" @if (blank($field['label'])) colspan="2" @endif>
                                 {!! $field['value'] !!}
                             </td>
                         @else
-                            <td style="padding: 10px;">
+                            <td style="padding: 10px;" @if (blank($field['label'])) colspan="2" @endif>
                                 @if (is_array(head($field['value'])))
-                                    <table class="w-full">
+                                    <table class="w-full avoid-page-break">
                                         @foreach ($field['value'] as $subfield)
                                             <tr>
-                                                <th class="w-20">
-                                                    {{ $subfield['label'] }}
-                                                </th>
-                                                @if (!is_array($subfield['value']))
+                                                @if (filled($subfield['label'] ?? null))
+                                                    <th class="w-20">
+                                                        {{ $subfield['label'] }}
+                                                    </th>
+                                                @endif
+                                                @if (!is_array($subfield['value'] ?? []))
                                                     <td style="padding: 10px;">
                                                         {{ $subfield['value'] }}
                                                     </td>
                                                 @else
                                                     <td style="padding: 10px;">
                                                         @if (is_array(head($subfield['value'])))
-                                                            <table class="w-full">
+                                                            <table class="w-full avoid-page-break">
                                                                 @foreach ($subfield['value'] as $subsubfield)
                                                                     <tr>
                                                                         <th>
@@ -70,7 +74,7 @@
                                         @endforeach
                                     </table>
                                 @else
-                                    <ul>
+                                    <ul class="avoid-page-break">
                                         @foreach ($field['value'] as $value)
                                             <li>{!! $value !!}</li>
                                         @endforeach
