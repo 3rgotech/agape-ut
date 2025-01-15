@@ -225,11 +225,7 @@ class ProjectCallResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('attributes.status'))
-                    ->badge()
-                    // ->color(fn (ProjectCallStatus $state) => $state->color())
-                    // ->formatStateUsing(fn (ProjectCallStatus $state): string => __($state->label()))
-                    ->searchable()
-                    ->sortable(),
+                    ->badge(),
                 Tables\Columns\ViewColumn::make('application_start_date')
                     ->label(__('admin.dates'))
                     ->view('filament.tables.columns.projectcall-planning')
