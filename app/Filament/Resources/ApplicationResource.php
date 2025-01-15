@@ -56,7 +56,11 @@ class ApplicationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('creator.last_name')
                     ->label(__('admin.roles.applicant'))
-                    ->formatStateUsing(fn(Application $application) => $application->creator->name),
+                    ->formatStateUsing(fn(Application $application) => $application->creator->name)
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->whereHas('creator', fn($query) => $query->whereRaw('CONCAT(first_name, " ", last_name) LIKE ?', ['%' . $search . '%']));
+                    }),
                 Tables\Columns\TextColumn::make('acronym')
                     ->label(__('attributes.acronym'))
                     ->searchable()
