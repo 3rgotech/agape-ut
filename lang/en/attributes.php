@@ -44,7 +44,7 @@ return [
     'short_description'         => 'Short Description',
     'summary_fr'                => 'Public Summary (FR)',
     'summary_en'                => 'Public Summary (EN)',
-    'summary_help'              => 'Destined for wide distribution on TIRIS - Université de Toulouse media',
+    'summary_help'              => 'Wide distribution on TIRIS - Université de Toulouse media',
     'carrier'                   => 'Project Carrier',
     'carrier_status'            => 'Status',
     'contact_name'              => 'Contact Name',
