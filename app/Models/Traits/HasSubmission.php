@@ -47,7 +47,7 @@ trait HasSubmission
 
             $users = $this->resolveAdmins();
             $notification = $this->getSubmissionNotification('submittedAdmins');
-            if (filled($notification)) {
+            if (filled($notification) && filled($users)) {
                 Notification::send(
                     $users,
                     new ($notification)($this)
