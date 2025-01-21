@@ -241,23 +241,23 @@ class ApplicationExport
                     'value' => [
                         [
                             'label' => __('attributes.total_amount'),
-                            'value' => $this->formatCurrency($item['total_amount']),
+                            'value' => $this->formatCurrency($item['total_amount'] ?? 0),
                         ],
                         [
                             'label' => __('attributes.hr_expenses'),
-                            'value' => $this->formatCurrency($item['hr_expenses']),
+                            'value' => $this->formatCurrency($item['hr_expenses'] ?? 0),
                         ],
                         [
                             'label' => __('attributes.operating_expenses'),
-                            'value' => $this->formatCurrency($item['operating_expenses']),
+                            'value' => $this->formatCurrency($item['operating_expenses'] ?? 0),
                         ],
                         [
                             'label' => __('attributes.investment_expenses'),
-                            'value' => $this->formatCurrency($item['investment_expenses']),
+                            'value' => $this->formatCurrency($item['investment_expenses'] ?? 0),
                         ],
                         [
                             'label' => __('attributes.internship_expenses'),
-                            'value' => $this->formatCurrency($item['internship_expenses']),
+                            'value' => $this->formatCurrency($item['internship_expenses'] ?? 0),
                         ],
                     ]
                 ])->toArray();
