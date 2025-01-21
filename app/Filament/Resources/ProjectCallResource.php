@@ -364,7 +364,7 @@ class ProjectCallResource extends Resource
                         ->color(Color::Cyan)
                         ->icon('fas-file-zipper')
                         ->url(fn(ProjectCall $record) => route('export_zip.project_call', ['projectCall' => $record]))
-                        ->hidden(fn(ProjectCall $record) => $record->status !== ProjectCallStatus::ARCHIVED && $record->status !== ProjectCallStatus::FINISHED)
+                        ->hidden(fn(ProjectCall $record) => $record->status === ProjectCallStatus::PLANNED || $record->status === ProjectCallStatus::APPLICATION)
                         ->openUrlInNewTab(),
                     Tables\Actions\Action::make('export_evaluations')
                         ->label(__('admin.application_excel_export'))
