@@ -601,7 +601,10 @@ class AgapeApplicationForm
         if (in_array($settings['type'], ['date'])) {
             $field = $field->minDate($settings['minValue'] ?? null)
                 ->maxDate($settings['maxValue'] ?? null)
-                ->format('Y-m-d');
+                ->format('Y-m-d')
+                // ->format(__('misc.date_format'))
+                // ->formatStateUsing(fn($state) => filled($state) ? Date::parse($state)?->format(__('misc.date_format')) : null)
+            ;
         }
 
         if ($settings['type'] === 'select') {
