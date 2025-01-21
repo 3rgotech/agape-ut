@@ -171,12 +171,13 @@ class Apply extends Page implements HasForms
 
         // Save laboratory budget
         $laboratoryBudget = [];
-        foreach ($formData['laboratory_budget'] as $item) {
+        foreach (($formData['laboratory_budget'] ?? []) as $item) {
             $l = [
-                'total_amount'        => $item['total_amount'],
-                'hr_expenses'         => $item['hr_expenses'],
-                'operating_expenses'  => $item['operating_expenses'],
-                'investment_expenses' => $item['investment_expenses'],
+                'total_amount'        => $item['total_amount'] ?? 0,
+                'hr_expenses'         => $item['hr_expenses'] ?? 0,
+                'operating_expenses'  => $item['operating_expenses'] ?? 0,
+                'investment_expenses' => $item['investment_expenses'] ?? 0,
+                'internship_expenses' => $item['internship_expenses'] ?? 0,
             ];
             // Prioritize laboratory_id over organization
             if (filled($item['laboratory_id'])) {
@@ -203,7 +204,7 @@ class Apply extends Page implements HasForms
 
         // Save carriers
         $obsoleteCarriers = collect($this->application->carriers()->pluck('id'));
-        foreach ($formData['carriers'] as $carrier) {
+        foreach (($formData['carriers'] ?? []) as $carrier) {
             if (filled($carrier['id'])) {
                 $obsoleteCarriers = $obsoleteCarriers->reject(fn($id) => $id === intval($carrier['id']));
                 $this->application->carriers()->where('id', intval($carrier['id']))->update(

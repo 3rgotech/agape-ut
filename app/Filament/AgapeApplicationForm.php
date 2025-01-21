@@ -253,7 +253,7 @@ class AgapeApplicationForm
                             ->maxItems(2)
                             ->defaultItems(1)
                             ->columnSpanFull()
-                            ->columns(['default' => 1, 'sm' => 3, 'lg' => 5])
+                            ->columns(['default' => 1, 'sm' => 3])
                             ->addActionLabel(__('pages.apply.add_laboratory_budget'))
                             ->helperText(__('attributes.laboratory_budget_help'))
                             ->deletable()
