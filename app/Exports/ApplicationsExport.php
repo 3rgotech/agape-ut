@@ -44,9 +44,9 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         $this->dynamicFields = collect($this->projectCall->projectCallType->dynamic_attributes ?? []);
 
         $collection = $this->collection();
-        $this->numberOfLaboratories = $collection->map(fn (Application $application) => $application->laboratories->count())->max() ?? 1;
-        $this->numberOfStudyFields = $collection->map(fn (Application $application) => $application->studyFields->count())->max() ?? 1;
-        $this->numberOfKeywords = $collection->map(fn (Application $application) => count($application->keywords))->max() ?? 1;
+        $this->numberOfLaboratories = $collection->map(fn(Application $application) => $application->laboratories->count())->max() ?? 1;
+        $this->numberOfStudyFields = $collection->map(fn(Application $application) => $application->studyFields->count())->max() ?? 1;
+        $this->numberOfKeywords = $collection->map(fn(Application $application) => count($application->keywords))->max() ?? 1;
     }
 
     public function collection()
@@ -62,16 +62,17 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         /**
          * @var Application $application
          */
+        $carrier = $application->carriers()->where('main_carrier', true)->first();
         $data = collect([
             $application->id,
             $application->reference,
             $application->acronym,
             $application->title,
-            $application->carrier['first_name'],
-            $application->carrier['last_name'],
-            $application->carrier['status'],
-            $application->carrier['email'],
-            $application->carrier['phone'],
+            $carrier['first_name'],
+            $carrier['last_name'],
+            $carrier['status'],
+            $carrier['email'],
+            $carrier['phone'],
         ]);
         foreach (range(1, $this->numberOfLaboratories) as $index) {
             $lab = $application->laboratories->get($index - 1);
@@ -91,7 +92,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         foreach (range(1, $this->numberOfKeywords) as $index) {
             $data->push($application->keywords[$index - 1] ?? '');
         }
-        $sectionFields = $this->dynamicFields->filter(fn ($field) => $field['section'] === 'general');
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'general');
         foreach ($sectionFields as $field) {
             $value = $application->extra_attributes->get($field['slug']) ?? '';
             if (is_iterable($value)) {
@@ -105,7 +106,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             Str::of($application->translate('summary', 'fr'))->stripTags()->toString(),
             Str::of($application->translate('summary', 'en'))->stripTags()->toString(),
         );
-        $sectionFields = $this->dynamicFields->filter(fn ($field) => $field['section'] === 'scientific');
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'scientific');
         foreach ($sectionFields as $field) {
             $value = $application->extra_attributes->get($field['slug']) ?? '';
             if (is_iterable($value)) {
@@ -124,7 +125,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
                 $application->total_expected_outcome
             );
         }
-        $sectionFields = $this->dynamicFields->filter(fn ($field) => $field['section'] === 'budget');
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'budget');
         foreach ($sectionFields as $field) {
             $value = $application->extra_attributes->get($field['slug']) ?? '';
             if (is_iterable($value)) {
@@ -151,7 +152,11 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             $this->projectCall->reference,
             '',
             __('pages.apply.sections.general'),
-            '', '', '', '', ''
+            '',
+            '',
+            '',
+            '',
+            ''
         ]);
         $secondRow = collect([
             __('exports.applications.columnGroups.application'),
@@ -196,24 +201,24 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         $secondRow->push('');
         $thirdRow->push(__('attributes.other_laboratories'));
 
-        $firstRow->push(...Collection::times($this->numberOfStudyFields, fn () => ''));
+        $firstRow->push(...Collection::times($this->numberOfStudyFields, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.study_fields'));
-        $secondRow->push(...Collection::times($this->numberOfStudyFields - 1, fn () => ''));
+        $secondRow->push(...Collection::times($this->numberOfStudyFields - 1, fn() => ''));
         $thirdRow->push(...Collection::times(
             $this->numberOfStudyFields,
-            fn ($i) => __('exports.applications.columns.study_field', ['index' => '#' . $i])
+            fn($i) => __('exports.applications.columns.study_field', ['index' => '#' . $i])
         ));
 
-        $firstRow->push(...Collection::times($this->numberOfKeywords, fn () => ''));
+        $firstRow->push(...Collection::times($this->numberOfKeywords, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.keywords'));
-        $secondRow->push(...Collection::times($this->numberOfKeywords - 1, fn () => ''));
+        $secondRow->push(...Collection::times($this->numberOfKeywords - 1, fn() => ''));
         $thirdRow->push(...Collection::times(
             $this->numberOfKeywords,
-            fn ($i) => __('exports.applications.columns.keyword', ['index' => '#' . $i])
+            fn($i) => __('exports.applications.columns.keyword', ['index' => '#' . $i])
         ));
 
         // Dynamic fields of first section
-        $sectionFields = $this->dynamicFields->filter(fn ($field) => $field['section'] === 'general');
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'general');
         foreach ($sectionFields as $field) {
             $firstRow->push('');
             $secondRow->push('');
@@ -230,7 +235,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         );
 
         // Dynamic fields of second section
-        $sectionFields = $this->dynamicFields->filter(fn ($field) => $field['section'] === 'scientific');
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'scientific');
         foreach ($sectionFields as $field) {
             $firstRow->push('');
             $secondRow->push('');
@@ -254,7 +259,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         }
 
         // Dynamic fields of third section
-        $sectionFields = $this->dynamicFields->filter(fn ($field) => $field['section'] === 'budget');
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'budget');
         foreach ($sectionFields as $field) {
             $firstRow->push('');
             $secondRow->push('');
