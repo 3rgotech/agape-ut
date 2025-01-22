@@ -51,7 +51,7 @@ class ApplicationExport
             'data'        => $inst->buildData(),
         ];
 
-        dump($data);
+        // dump($data);
 
         return [$title, self::getPdf('export.application', $data, $debug)];
     }
