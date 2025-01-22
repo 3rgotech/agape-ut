@@ -40,12 +40,12 @@ trait HasSubmission
 
             $notification = $this->getSubmissionNotification('submittedLabDirectors');
             if (filled($notification)) {
-                foreach ($this->resolveLabDirectors() as $email) {
-                    Notification::route('mail', $email)->notify(new ($notification)($this));
-                }
+                collect($this->resolveLabDirectors())
+                    ->filter()
+                    ->each(fn($email) => Notification::route('mail', $email)->notify(new ($notification)($this)));
             }
 
-            $users = $this->resolveAdmins();
+            $users = collect($this->resolveAdmins())->filter();
             $notification = $this->getSubmissionNotification('submittedAdmins');
             if (filled($notification) && filled($users)) {
                 Notification::send(
