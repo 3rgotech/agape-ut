@@ -239,7 +239,6 @@ class AgapeApplicationForm
                             ->default(true)
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 $entries = $get('laboratory_budget');
-                                dump($get('managing_structure_is_lab'));
                                 foreach ($entries as $key => $entry) {
                                     if (!$state) {
                                         $set('laboratory_budget.' . $key . '.laboratory_id', null);

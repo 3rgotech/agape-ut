@@ -15,6 +15,7 @@ use Spatie\Translatable\HasTranslations;
  * @property string $reference
  * @property array $label_long
  * @property array $label_short
+ * @property bool $lab_budget
  * @property array $dynamic_attributes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
