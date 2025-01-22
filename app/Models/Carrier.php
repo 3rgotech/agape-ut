@@ -92,4 +92,14 @@ class Carrier extends Model
             get: fn() => filled($this->laboratory),
         );
     }
+
+    public function getJobTitle(): string
+    {
+        return $this->job_title->value === JobTitle::OTHER->value ? $this->job_title_other : $this->job_title->getLabel();
+    }
+
+    public function getOrganizationType(): string
+    {
+        return $this->organization_type->value === OrganizationType::OTHER->value ? $this->organization_type_other : $this->organization_type->getLabel();
+    }
 }

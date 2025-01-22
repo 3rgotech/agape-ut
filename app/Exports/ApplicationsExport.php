@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Application;
+use App\Models\Laboratory;
 use App\Models\ProjectCall;
 use App\Settings\GeneralSettings;
 use Illuminate\Contracts\Support\Responsable;
@@ -62,29 +63,12 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         /**
          * @var Application $application
          */
-        $carrier = $application->carriers()->where('main_carrier', true)->first();
         $data = collect([
             $application->id,
             $application->reference,
             $application->acronym,
             $application->title,
-            $carrier['first_name'],
-            $carrier['last_name'],
-            $carrier['status'],
-            $carrier['email'],
-            $carrier['phone'],
         ]);
-        foreach (range(1, $this->numberOfLaboratories) as $index) {
-            $lab = $application->laboratories->get($index - 1);
-            $data->push(
-                $lab?->name ?? '',
-                $lab?->unit_code ?? '',
-                $lab?->regency ?? '',
-                $lab?->director_email ?? '',
-                $lab?->pivot?->contact_name ?? ''
-            );
-        }
-        $data->push(Str::of($application->other_laboratories)->stripTags()->toString(),);
         foreach (range(1, $this->numberOfStudyFields) as $index) {
             $sf = $application->studyFields->get($index - 1);
             $data->push($sf?->name ?? '');
@@ -115,6 +99,26 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             $data->push($value);
         }
 
+        $carriers = $application->carriers()->where('main_carrier', true)->get()->values();
+        $carrier1 = $carriers->count() > 0 ? $carriers->first() : null;
+        $carrier2 = $carriers->count() > 1 ? $carriers->last() : null;
+        foreach ([$carrier1, $carrier2] as $carrier) {
+            if (filled($carrier)) {
+                $data->push(
+                    $carrier->first_name,
+                    $carrier->last_name,
+                    $carrier->email,
+                    $carrier->phone,
+                    filled($carrier->laboratory) ? $carrier->laboratory->name : '',
+                    filled($carrier->laboratory) ? $carrier->getJobTitle() : '',
+                    blank($carrier->laboratory) ? $carrier->organization : '',
+                    blank($carrier->laboratory) ? $carrier->getOrganizationType() : '',
+                );
+            } else {
+                $data->push(...Collection::times(8, fn() => ''));
+            }
+        }
+
         $data->push(
             $application->amount_requested,
             $application->other_fundings
@@ -132,6 +136,24 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
                 $value = implode(', ', $value);
             }
             $data->push($value);
+        }
+        foreach (range(0, 1) as $index) {
+            if (filled($application->laboratory_budget[$index] ?? null)) {
+                $data->push(
+                    (
+                        filled($application->laboratory_budget[$index]['laboratory_id'])
+                        ? Laboratory::find($application->laboratory_budget[$index]['laboratory_id'])?->name
+                        : $application->laboratory_budget[$index]['organization']
+                    ) ?? '',
+                    $application->laboratory_budget[$index]['total_amount'] ?? '',
+                    $application->laboratory_budget[$index]['hr_expenses'] ?? '',
+                    $application->laboratory_budget[$index]['operating_expenses'] ?? '',
+                    $application->laboratory_budget[$index]['investment_expenses'] ?? '',
+                    $application->laboratory_budget[$index]['internship_expenses'] ?? '',
+                );
+            } else {
+                $data->push(...Collection::times(6, fn() => ''));
+            }
         }
 
         return $data->toArray();
@@ -152,19 +174,9 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             $this->projectCall->reference,
             '',
             __('pages.apply.sections.general'),
-            '',
-            '',
-            '',
-            '',
-            ''
         ]);
         $secondRow = collect([
             __('exports.applications.columnGroups.application'),
-            '',
-            '',
-            '',
-            __('exports.applications.columnGroups.carrier'),
-            '',
             '',
             '',
             '',
@@ -174,33 +186,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             __('attributes.reference'),
             __('attributes.acronym'),
             __('attributes.title'),
-            __('exports.applications.columns.carrier_last_name'),
-            __('exports.applications.columns.carrier_first_name'),
-            __('exports.applications.columns.carrier_status'),
-            __('exports.applications.columns.carrier_email'),
-            __('exports.applications.columns.carrier_phone'),
         ]);
-        foreach (range(1, $this->numberOfLaboratories) as $index) {
-            $firstRow->push('', '', '', '', '');
-            $secondRow->push(
-                __('exports.applications.columnGroups.laboratory', ['index' => '#' . $index]),
-                '',
-                '',
-                '',
-                ''
-            );
-            $thirdRow->push(
-                __('exports.applications.columns.laboratory_name',           ['index' => '#' . $index]),
-                __('exports.applications.columns.laboratory_unit_code',      ['index' => '#' . $index]),
-                __('exports.applications.columns.laboratory_regency',        ['index' => '#' . $index]),
-                __('exports.applications.columns.laboratory_director_email', ['index' => '#' . $index]),
-                __('exports.applications.columns.laboratory_contact',        ['index' => '#' . $index]),
-            );
-        }
-        $firstRow->push('');
-        $secondRow->push('');
-        $thirdRow->push(__('attributes.other_laboratories'));
-
         $firstRow->push(...Collection::times($this->numberOfStudyFields, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.study_fields'));
         $secondRow->push(...Collection::times($this->numberOfStudyFields - 1, fn() => ''));
@@ -243,6 +229,25 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         }
 
         // Third section
+        $carrierFields = [
+            __('exports.applications.columns.carrier_last_name'),
+            __('exports.applications.columns.carrier_first_name'),
+            __('exports.applications.columns.carrier_email'),
+            __('exports.applications.columns.carrier_phone'),
+            __('resources.laboratory'),
+            __('attributes.job_title'),
+            __('attributes.organization'),
+            __('attributes.organization_type')
+        ];
+        $firstRow->push(__('pages.apply.sections.carriers'));
+        $firstRow->push(...Collection::times(2 * count($carrierFields) - 1, fn() => ''));
+        $secondRow->push(__('exports.applications.columnGroups.carrier1'));
+        $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
+        $secondRow->push(__('exports.applications.columnGroups.carrier2'));
+        $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
+        $thirdRow->push(...$carrierFields, ...$carrierFields);
+
+        // Fourth section
         $firstRow->push(__('pages.apply.sections.budget'), '');
         $secondRow->push('', '');
         $thirdRow->push(
@@ -252,9 +257,24 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         if ($this->generalSettings->enableBudgetIncomeOutcome) {
             $firstRow->push('', '');
             $secondRow->push('', '');
-            $secondRow->push(
+            $thirdRow->push(
                 __('attributes.total_expected_income'),
                 __('attributes.total_expected_outcome')
+            );
+        }
+        foreach (range(0, 1) as $index) {
+            $firstRow->push(...Collection::times(6, fn() => ''));
+            $secondRow->push(
+                __('exports.applications.columns.budget_laboratory', ['index' => '#' . ($index + 1)]),
+                ...Collection::times(5, fn() => '')
+            );
+            $thirdRow->push(
+                __('resources.laboratory') . '/' . __('attributes.organization'),
+                __('attributes.total_amount'),
+                __('attributes.hr_expenses'),
+                __('attributes.operating_expenses'),
+                __('attributes.investment_expenses'),
+                __('attributes.internship_expenses'),
             );
         }
 
