@@ -273,9 +273,8 @@ class Application extends Model implements HasMedia, WithSubmission
 
     public function toArrayForValidation(): array
     {
-        $this->load(['applicationLaboratories', 'studyFields', 'media']);
+        $this->load(['carriers', 'studyFields', 'media']);
         $data = $this->toArray();
-        $data['applicationLaboratories'] = $data['application_laboratories'];
         $data['studyFields'] = $data['study_fields'];
         $data = [
             ...$data,
