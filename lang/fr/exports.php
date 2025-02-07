@@ -8,6 +8,7 @@ return [
             "application"  => "Candidature",
             "carrier1"     => "Porteur 1",
             "carrier2"     => "Porteur 2",
+            "teamMembers"  => "Membre de l'équipe :index",
             "laboratory"   => "Laboratoire :index",
             "study_fields" => "Champs Disciplinaires",
             "keywords"     => "Mot-clés",

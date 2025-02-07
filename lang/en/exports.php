@@ -8,6 +8,7 @@ return [
             "application"  => "Application",
             "carrier1"     => "Carrier 1",
             "carrier2"     => "Carrier 2",
+            "teamMembers"  => "Team Member :index",
             "laboratory"   => "Laboratory :index",
             "study_fields" => "Study Fields",
             "keywords"     => "Keywords",

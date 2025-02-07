@@ -33,6 +33,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
     protected int $numberOfLaboratories;
     protected int $numberOfStudyFields;
     protected int $numberOfKeywords;
+    protected int $numberOfCarriers;
     protected Collection $dynamicFields;
     protected array $merges = [];
 
@@ -48,6 +49,7 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         $this->numberOfLaboratories = $collection->map(fn(Application $application) => $application->laboratories->count())->max() ?? 1;
         $this->numberOfStudyFields = $collection->map(fn(Application $application) => $application->studyFields->count())->max() ?? 1;
         $this->numberOfKeywords = $collection->map(fn(Application $application) => count($application->keywords))->max() ?? 1;
+        $this->numberOfCarriers = $collection->map(fn(Application $application) => $application->carriers()->where('main_carrier', false)->count())->max() ?? 0;
     }
 
     public function collection()
@@ -99,10 +101,22 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             $data->push($value);
         }
 
-        $carriers = $application->carriers()->where('main_carrier', true)->get()->values();
-        $carrier1 = $carriers->count() > 0 ? $carriers->first() : null;
-        $carrier2 = $carriers->count() > 1 ? $carriers->last() : null;
-        foreach ([$carrier1, $carrier2] as $carrier) {
+        $carriers    = $application->carriers()->where('main_carrier', true)->get()->values();
+        $carrier1    = $carriers->count() > 0 ? $carriers->first() : null;
+        $carrier2    = $carriers->count() > 1 ? $carriers->last() : null;
+        $teamMembers = $application->carriers()->where('main_carrier', false)->get()->values();
+
+        $allCarriers = collect([
+            // Main carriers (1 or 2, null if not present)
+            $carrier1,
+            $carrier2,
+            // Team members (variable number, empty arrays if not present)
+            ...$teamMembers,
+            // Fill with null to reach the max amount
+            ...Collection::times($this->numberOfCarriers - count($teamMembers), fn() => []),
+        ]);
+
+        foreach ($allCarriers as $carrier) {
             if (filled($carrier)) {
                 $data->push(
                     $carrier->first_name,
@@ -241,12 +255,17 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             __('attributes.organization_type')
         ];
         $firstRow->push(__('pages.apply.sections.carriers'));
-        $firstRow->push(...Collection::times(2 * count($carrierFields) - 1, fn() => ''));
+        $firstRow->push(...Collection::times($this->numberOfCarriers * count($carrierFields) - 1, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.carrier1'));
         $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.carrier2'));
         $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
         $thirdRow->push(...$carrierFields, ...$carrierFields);
+        foreach (range(1, $this->numberOfCarriers) as $index) {
+            $secondRow->push(__('exports.applications.columnGroups.teamMembers', ['index' => $index]));
+            $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
+            $thirdRow->push(...$carrierFields);
+        }
 
         // Fourth section
         $firstRow->push(__('pages.apply.sections.budget'), '');
