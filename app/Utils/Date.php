@@ -13,10 +13,18 @@ class Date
             'd/m/Y',
         ];
         foreach ($formats as $format) {
-            if (Carbon::hasFormat($date, $format)) {
+            if (Carbon::hasFormat($date, $format) && Carbon::createFromFormat($format, $date)->format($format) === $date) {
                 return Carbon::createFromFormat($format, $date);
             }
         }
+        if (strtotime($date) !== false) {
+            return Carbon::createFromTimestamp(strtotime($date));
+        }
         return null;
+    }
+
+    public static function isValid(string $date): bool
+    {
+        return self::parse($date) !== null;
     }
 }

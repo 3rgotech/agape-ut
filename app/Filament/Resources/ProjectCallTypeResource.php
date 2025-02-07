@@ -7,6 +7,8 @@ use App\Filament\AgapeForm;
 use App\Filament\AgapeTable;
 use App\Filament\Resources\ProjectCallTypeResource\Pages;
 use App\Models\ProjectCallType;
+use App\Utils\Date;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -188,10 +190,20 @@ class ProjectCallTypeResource extends Resource
                                 Forms\Components\TextInput::make('minValue')
                                     ->label(__('attributes.dynamic_attributes.min_value'))
                                     ->inlineLabel(true)
+                                    ->rules([fn(): Closure => function (string $attribute, mixed $value, Closure $fail) {
+                                        if (filled($value) && !Date::isValid($value)) {
+                                            $fail(__('admin.dynamic_attributes.invalid_date'));
+                                        }
+                                    }])
                                     ->hidden(fn(Forms\Get $get) => $get('type') !== 'date'),
                                 Forms\Components\TextInput::make('maxValue')
                                     ->label(__('attributes.dynamic_attributes.max_value'))
                                     ->inlineLabel(true)
+                                    ->rules([fn(): Closure => function (string $attribute, mixed $value, Closure $fail) {
+                                        if (filled($value) && !Date::isValid($value)) {
+                                            $fail(__('admin.dynamic_attributes.invalid_date'));
+                                        }
+                                    }])
                                     ->hidden(fn(Forms\Get $get) => $get('type') !== 'date'),
                             ]),
                         // Repeatable

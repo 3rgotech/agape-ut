@@ -77,6 +77,7 @@ return [
         'after_field_help' => 'Leave blank to add the field to the end of the section',
         'add_option'       => 'Add Option',
         'add_choice'       => 'Add Choice',
+        'invalid_date'     => 'Invalid Date',
     ],
 
     'dates'                    => 'Calendar',
