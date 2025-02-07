@@ -139,17 +139,18 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
         }
         foreach (range(0, 1) as $index) {
             if (filled($application->laboratory_budget[$index] ?? null)) {
+                $budget = $application->laboratory_budget[$index];
                 $data->push(
                     (
-                        filled($application->laboratory_budget[$index]['laboratory_id'])
-                        ? Laboratory::find($application->laboratory_budget[$index]['laboratory_id'])?->name
-                        : $application->laboratory_budget[$index]['organization']
+                        filled($budget['laboratory_id'] ?? null)
+                        ? Laboratory::find($budget['laboratory_id'])?->name
+                        : $budget['organization']
                     ) ?? '',
-                    $application->laboratory_budget[$index]['total_amount'] ?? '',
-                    $application->laboratory_budget[$index]['hr_expenses'] ?? '',
-                    $application->laboratory_budget[$index]['operating_expenses'] ?? '',
-                    $application->laboratory_budget[$index]['investment_expenses'] ?? '',
-                    $application->laboratory_budget[$index]['internship_expenses'] ?? '',
+                    $budget['total_amount'] ?? '',
+                    $budget['hr_expenses'] ?? '',
+                    $budget['operating_expenses'] ?? '',
+                    $budget['investment_expenses'] ?? '',
+                    $budget['internship_expenses'] ?? '',
                 );
             } else {
                 $data->push(...Collection::times(6, fn() => ''));
