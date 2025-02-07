@@ -16,7 +16,6 @@ class Application
     {
         $generalSettings = app(GeneralSettings::class);
         $maxNumberOfKeywords = $projectCall->extra_attributes->get("number_of_keywords", null);
-        $maxNumberOfLaboratories = $projectCall->extra_attributes->get("number_of_laboratories", null);
         $maxNumberOfStudyFields = $projectCall->extra_attributes->get("number_of_study_fields", null);
         $maxNumberOfDocuments = $projectCall->extra_attributes->get("number_of_documents", null);
         $rules = [
@@ -28,11 +27,24 @@ class Application
             'keywords'                                => $maxNumberOfKeywords > 0 ? ('required|array|min:1|max:' . $maxNumberOfKeywords) : 'nullable',
             'keywords.*'                              => 'max:100',
             'short_description'                       => 'required',
-            'carriers'                                => 'required|array|min:1',
+            'carriers'                                => [
+                'required',
+                'array',
+                'min:1',
+                function ($attribute, $value, $fail) {
+                    $mainCarriers = collect($value)->filter(fn($carrier) => $carrier['main_carrier'] === true)->count();
+                    if ($mainCarriers === 0) {
+                        $fail(__('validation.custom.carrier.main_carrier_required'));
+                    } else if ($mainCarriers >= 2) {
+                        $fail(__('validation.custom.carrier.main_carrier_max'));
+                    }
+                }
+            ],
             'carriers.*.first_name'                   => 'required|string|max:255',
             'carriers.*.last_name'                    => 'required|string|max:255',
             'carriers.*.email'                        => 'required|string|max:255|email',
             'carriers.*.phone'                        => 'required|string|max:255',
+            'carriers.*.main_carrier'                 => 'boolean',
             'carriers.*.laboratory_id'                => 'nullable|required_without:carriers.*.organization|exists:laboratories,id',
             'carriers.*.job_title'                    => ['nullable', 'required_with:carriers.*.laboratory_id', Rule::enum(JobTitle::class)],
             'carriers.*.job_title_other'              => 'nullable|required_if:carriers.*.job_title,other|string|max:255',

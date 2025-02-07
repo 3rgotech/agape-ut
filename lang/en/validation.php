@@ -227,6 +227,8 @@ return [
             'hcaptcha' => 'The anti-robot system has rejected your action. Please try again.',
         ],
         'carrier' => [
+            'main_carrier_required'            => 'You must select at least 1 carrier among the team members.',
+            'main_carrier_max'                 => 'You cannot select more than 2 carriers among the team members.',
             'laboratory_required'              => 'This field is required.',
             'job_title_required'               => 'This field is required.',
             'job_title_other_required'         => 'This field is required.',

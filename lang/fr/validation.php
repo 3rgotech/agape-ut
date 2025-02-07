@@ -227,6 +227,8 @@ return [
             'hcaptcha' => 'Le système anti-robots a rejeté votre demande. Veuillez réessayer.',
         ],
         'carrier' => [
+            'main_carrier_required'            => 'Vous devez sélectionner au moins 1 porteur parmi les membres de l\'équipe.',
+            'main_carrier_max'                 => 'Vous ne pouvez pas sélectionner plus de 2 porteurs parmi les membres de l\'équipe.',
             'laboratory_required'              => 'Ce champ est obligatoire.',
             'job_title_required'               => 'Ce champ est obligatoire.',
             'job_title_other_required'         => 'Ce champ est obligatoire.',
