@@ -267,6 +267,7 @@ class Apply extends Page implements HasForms
         );
         if ($validator->fails()) {
             if (App::isLocal()) {
+                dump($formData);
                 dump($validator->errors()->messages());
             }
             $errors = collect($validator->errors()->messages())

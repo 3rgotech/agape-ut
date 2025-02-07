@@ -7,6 +7,7 @@ use App\Enums\OrganizationType;
 use App\Models\ProjectCall;
 use App\Rules\ConsistentArrayKeys;
 use App\Settings\GeneralSettings;
+use App\Utils\Date;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
@@ -91,7 +92,7 @@ class Application
                     ($attribute['minItems'] ?? null) ? 'min:' . $attribute['minItems'] : null,
                     ($attribute['maxItems'] ?? null) ? 'max:' . $attribute['maxItems'] : null,
                 ];
-                $slug = $attribute['slug'] . '.*';
+                $slug = $slug . '.*.value';
             }
             switch ($attribute['type']) {
                 case 'text':
@@ -152,7 +153,7 @@ class Application
         foreach ($dynamicAttributes as $attribute) {
             $slug = 'extra_attributes.' . $attribute['slug'];
             if ($attribute['repeatable'] ?? false) {
-                $slug = $attribute['slug'] . '.*';
+                $slug = $slug . '.*';
             }
 
             if ($attribute['type'] === 'date') {
@@ -204,17 +205,16 @@ class Application
         // Add dynamic attributes
         $dynamicAttributes = $projectCall->projectCallType->dynamic_attributes;
         foreach ($dynamicAttributes as $attribute) {
-            $attributes['extra_attributes.' . $attribute['slug']] = $attribute['label'][app()->getLocale()];
+            $attributes['extra_attributes.' . $attribute['slug'] . '.*.value'] = $attribute['label'][app()->getLocale()];
         }
         return $attributes;
     }
 
     public static function formatDateForRule(string $date): string
     {
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            return $date;
-        } else if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $date)) {
-            return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
+        $dateObj = Date::parse($date);
+        if ($dateObj !== null) {
+            return $dateObj->format('Y-m-d');
         } else if (strtotime($date) !== false) {
             return $date;
         } else {
@@ -224,10 +224,9 @@ class Application
 
     public static function formatDateForMessage(string $date): string
     {
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            return Carbon::createFromFormat('Y-m-d', $date)->format(__('misc.date_format'));
-        } else if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $date)) {
-            return Carbon::createFromFormat('d/m/Y', $date)->format(__('misc.date_format'));
+        $dateObj = Date::parse($date);
+        if ($dateObj !== null) {
+            return $dateObj->format(__('misc.date_format'));
         } else if (strtotime($date) !== false) {
             return $date;
         } else {

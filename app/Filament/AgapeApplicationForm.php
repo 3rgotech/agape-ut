@@ -8,6 +8,7 @@ use App\Models\Laboratory;
 use App\Models\ProjectCall;
 use App\Models\StudyField;
 use App\Settings\GeneralSettings;
+use App\Utils\Date;
 use App\Utils\MimeType;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Closure;
@@ -598,10 +599,9 @@ class AgapeApplicationForm
         }
 
         if (in_array($settings['type'], ['date'])) {
-            $field = $field->minDate($settings['minValue'] ?? null)
-                ->maxDate($settings['maxValue'] ?? null)
-                ->format('Y-m-d')
-                // ->format(__('misc.date_format'))
+            $field = $field->minDate($settings['minValue'] ? Date::parse($settings['minValue']) : null)
+                ->maxDate($settings['maxValue'] ? Date::parse($settings['maxValue']) : null)
+                ->format(__('misc.date_format'))
                 // ->formatStateUsing(fn($state) => filled($state) ? Date::parse($state)?->format(__('misc.date_format')) : null)
             ;
         }
