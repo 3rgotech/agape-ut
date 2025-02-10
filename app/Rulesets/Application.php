@@ -88,7 +88,7 @@ class Application
             $slug = 'extra_attributes.' . $attribute['slug'];
             if ($attribute['repeatable'] ?? false) {
                 $attributeRules[$slug] = [
-                    ($attribute['required'] ?? false) ? 'required' : 'sometimes',
+                    ($attribute['required'] ?? false) ? 'required' : 'nullable',
                     ($attribute['minItems'] ?? null) ? 'min:' . $attribute['minItems'] : null,
                     ($attribute['maxItems'] ?? null) ? 'max:' . $attribute['maxItems'] : null,
                 ];
@@ -99,7 +99,7 @@ class Application
                 case 'richtext':
                 case 'textarea':
                     $attributeRules[$slug] = [
-                        ($attribute['required'] ?? false) ? 'required' : 'sometimes',
+                        ($attribute['required'] ?? false) ? 'required' : 'nullable',
                         'string',
                         ($attribute['minValue'] ?? null) ? 'min:' . $attribute['minValue'] : null,
                         ($attribute['maxValue'] ?? null) ? 'max:' . $attribute['maxValue'] : null,
@@ -107,7 +107,7 @@ class Application
                     break;
                 case 'date':
                     $attributeRules[$slug] = [
-                        ($attribute['required'] ?? false) ? 'required' : 'sometimes',
+                        ($attribute['required'] ?? false) ? 'required' : 'nullable',
                         'date',
                         ($attribute['minValue'] ?? null) ? 'after:' . self::formatDateForRule($attribute['minValue']) : null,
                         ($attribute['maxValue'] ?? null) ? 'before:' . self::formatDateForRule($attribute['maxValue']) : null,
@@ -115,14 +115,14 @@ class Application
                     break;
                 case 'checkbox':
                     $attributeRules[$slug] = [
-                        ($attribute['required'] ?? false) ? 'required' : 'sometimes',
+                        ($attribute['required'] ?? false) ? 'required' : 'nullable',
                         'array'
                     ];
                     $attributeRules[$slug . '.*'] = [Rule::in(array_column($attribute['choices'], 'value'))];
                     break;
                 case 'select':
                     $attributeRules[$slug] = [
-                        ($attribute['required'] ?? false) ? 'required' : 'sometimes',
+                        ($attribute['required'] ?? false) ? 'required' : 'nullable',
                         $attribute['multiple'] ? 'array' : 'string'
                     ];
                     if ($attribute['multiple']) {
