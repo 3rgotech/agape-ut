@@ -153,6 +153,18 @@ class Application
         foreach ($dynamicAttributes as $attribute) {
             $slug = 'extra_attributes.' . $attribute['slug'];
             if ($attribute['repeatable'] ?? false) {
+                if (filled($attribute['minItems'] ?? null)) {
+                    $messages[$slug . '.min'] = __('validation.min.array', [
+                        'attribute' => $attribute['label'][app()->getLocale()],
+                        'min'       => $attribute['minItems']
+                    ]);
+                }
+                if (filled($attribute['maxItems'] ?? null)) {
+                    $messages[$slug . '.max'] = __('validation.max.array', [
+                        'attribute' => $attribute['label'][app()->getLocale()],
+                        'max'       => $attribute['maxItems']
+                    ]);
+                }
                 $slug = $slug . '.*';
             }
 
