@@ -204,7 +204,7 @@ class ApplicationExport
                         ],
                         [
                             'label' => __('attributes.phone'),
-                            'value' => $carrier->phone
+                            'value' => $carrier->phone ?? ''
                         ],
                         [
                             'label' => __('attributes.main_carrier'),

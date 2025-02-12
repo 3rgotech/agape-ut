@@ -163,7 +163,7 @@ class AgapeApplicationForm
                             ->email(),
                         Forms\Components\TextInput::make('phone')
                             ->label(__('attributes.phone'))
-                            ->required(),
+                            ->nullable(),
                         Forms\Components\Toggle::make('main_carrier')
                             ->label(__('attributes.main_carrier'))
                             ->live()
