@@ -346,21 +346,21 @@ class ApplicationExport
                     );
             case 'select':
                 $options = collect($settings['options'] ?? [])
-                    ->mapWithKeys(fn($o) => [$o['value'] => $o['label'][app()->getLocale()]])->toArray();
+                    ->mapWithKeys(fn($o) => [$o['value'] => $o['label'][app()->getLocale()]]);
                 return ($settings['multiple'] ?? false)
                     ? collect($this->application->extra_attributes->get($slug, null))
                     ->flatten()
                     ->values()
-                    ->map(fn($value) => $options[$value])
+                    ->map(fn($value) => $options[$value] ?? null)
                     ->all()
-                    : $options[$this->application->extra_attributes->get($slug, null)];
+                    : $options->get($this->application->extra_attributes->get($slug, null), null);
             case 'checkbox':
                 $choices = collect($settings['choices'] ?? [])
                     ->mapWithKeys(fn($o) => [$o['value'] => $o['label'][app()->getLocale()]])->toArray();
                 return collect($this->application->extra_attributes->get($slug, null))
                     ->flatten()
                     ->values()
-                    ->map(fn($value) => $choices[$value])
+                    ->map(fn($value) => $choices[$value] ?? null)
                     ->all();
             default:
                 return null;
