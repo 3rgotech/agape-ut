@@ -132,6 +132,14 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
                 $data->push(...Collection::times(8, fn() => ''));
             }
         }
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'carriers');
+        foreach ($sectionFields as $field) {
+            $value = $application->extra_attributes->get($field['slug']) ?? '';
+            if (is_iterable($value)) {
+                $value = implode(', ', $value);
+            }
+            $data->push($value);
+        }
 
         $data->push(
             $application->amount_requested,
@@ -255,16 +263,26 @@ class ApplicationsExport implements FromCollection, WithMapping, ShouldAutoSize,
             __('attributes.organization_type')
         ];
         $firstRow->push(__('pages.apply.sections.carriers'));
-        $firstRow->push(...Collection::times($this->numberOfCarriers * count($carrierFields) - 1, fn() => ''));
+        $firstRow->push(...Collection::times((2 * count($carrierFields)) - 1, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.carrier1'));
         $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
         $secondRow->push(__('exports.applications.columnGroups.carrier2'));
         $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
         $thirdRow->push(...$carrierFields, ...$carrierFields);
-        foreach (range(1, $this->numberOfCarriers) as $index) {
-            $secondRow->push(__('exports.applications.columnGroups.teamMembers', ['index' => $index]));
-            $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
-            $thirdRow->push(...$carrierFields);
+        if ($this->numberOfCarriers > 0) {
+            foreach (range(1, $this->numberOfCarriers) as $index) {
+                $secondRow->push(__('exports.applications.columnGroups.teamMembers', ['index' => $index]));
+                $secondRow->push(...Collection::times(count($carrierFields) - 1, fn() => ''));
+                $thirdRow->push(...$carrierFields);
+            }
+        }
+
+        // Dynamic fields of third section
+        $sectionFields = $this->dynamicFields->filter(fn($field) => $field['section'] === 'carriers');
+        foreach ($sectionFields as $field) {
+            $firstRow->push('');
+            $secondRow->push('');
+            $thirdRow->push($field['label'][app()->getLocale()]);
         }
 
         // Fourth section
